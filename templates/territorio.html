@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Território{% endblock %}
+{% block body_class %}section-territorio{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🗺️ Território</h1>
+</div>
+<p class="page-intro">Compare os municípios cadastrados. Clique em um deles para ver todos os detalhes.</p>
+
+<div class="table-wrap">
+    <table class="data-table">
+        <caption>Números fictícios de desenvolvimento.</caption>
+        <thead>
+            <tr>
+                <th>Município</th>
+                <th>Pessoas</th>
+                <th>Organizações</th>
+                <th>Horas disponíveis</th>
+                <th>Horas trocadas</th>
+                <th>Necessidades abertas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in indicadores %}
+            <tr onclick="window.location='{{ url_for('territorio.detail', municipality_id=i.municipio.id) }}'" style="cursor:pointer">
+                <td><a href="{{ url_for('territorio.detail', municipality_id=i.municipio.id) }}">{{ i.municipio.name }}</a></td>
+                <td>{{ i.pessoas_cadastradas }}</td>
+                <td>{{ i.organizacoes }}</td>
+                <td>⏱️ {{ i.horas_disponiveis }}h</td>
+                <td>🔄 {{ i.horas_trocadas }}h</td>
+                <td>🙋 {{ i.necessidades_abertas }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

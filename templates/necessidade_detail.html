@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ need.title }}{% endblock %}
+{% block body_class %}section-necessidades{% endblock %}
+
+{% block content %}
+{% set b = status_badge('need', need.status) %}
+<div class="page-header">
+    <h1>{{ need.title }}</h1>
+    <span class="badge badge-{{ b.tone }}">{{ b.icon }} {{ b.label }}</span>
+</div>
+
+<p class="card-sub">{{ need.requester_display_name }} · 📍 {{ need.municipality.name }}{% if need.location %} · {{ need.location }}{% endif %}</p>
+
+{% if need.description %}<p>{{ need.description }}</p>{% endif %}
+
+<div class="tags">
+    <span class="tag">⏱️ {{ need.hours }} h</span>
+    {% if need.skill %}<span class="tag tag-muted">{{ need.skill.name }}</span>{% endif %}
+</div>
+
+<form class="status-actions" method="post" action="{{ url_for('necessidades.alterar_status', need_id=need.id) }}">
+    <span>Mudar situação:</span>
+    <button class="btn" type="submit" name="status" value="aberta">🟢 Aberta</button>
+    <button class="btn" type="submit" name="status" value="atendida">✔️ Atendida</button>
+    <button class="btn" type="submit" name="status" value="cancelada">⛔ Cancelada</button>
+</form>
+
+<div class="section">
+    <h2>🙌 Quem pode ajudar</h2>
+    <p class="hint">
+        A lista abaixo é montada automaticamente: primeiro quem tem a habilidade pedida,
+        depois priorizando quem mora na mesma cidade e informou disponibilidade.
+    </p>
+
+    {% if not need.skill %}
+    <p class="empty">Escolha uma habilidade relacionada para gerar essa lista.</p>
+    {% elif recomendacoes %}
+    <div class="card-list">
+        {% for r in recomendacoes %}
+        <a class="card" href="{{ url_for('talentos.perfil', user_id=r.pessoa.id) }}">
+            <div class="card-title"><span>{{ r.pessoa.public_name }}</span></div>
+            <div class="card-sub">📍 {{ r.pessoa.municipality.name }}</div>
+            <ul class="reasons">
+                {% for motivo in r.motivos %}
+                <li>{{ motivo }}</li>
+                {% endfor %}
+            </ul>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty">Nenhuma pessoa ativa compatível encontrada ainda.</p>
+    {% endif %}
+</div>
+
+<a class="btn" href="{{ url_for('necessidades.list') }}">← Voltar</a>
+{% endblock %}

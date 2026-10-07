@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Pessoas{% endblock %}
+{% block body_class %}section-talentos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>👥 Pessoas</h1>
+    <a class="btn btn-primary" href="{{ url_for('talentos.novo') }}">➕ Cadastrar pessoa</a>
+</div>
+<p class="page-intro">Aqui você encontra quem já está cadastrado e o que cada pessoa sabe fazer.</p>
+
+<form class="filters" method="get">
+    <input type="text" name="habilidade" placeholder="🔎 Buscar por habilidade (ex.: Excel)" value="{{ filtro_habilidade or '' }}">
+
+    <select name="municipio">
+        <option value="">Todos os municípios</option>
+        {% for m in municipios %}
+        <option value="{{ m.id }}" {{ 'selected' if filtro_municipio == m.id else '' }}>{{ m.name }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="status">
+        <option value="">Ativas e inativas</option>
+        <option value="ativo" {{ 'selected' if filtro_status == 'ativo' else '' }}>Só ativas</option>
+        <option value="inativo" {{ 'selected' if filtro_status == 'inativo' else '' }}>Só inativas</option>
+    </select>
+
+    <button class="btn btn-primary" type="submit">Filtrar</button>
+</form>
+
+{% if pessoas %}
+<div class="card-list">
+    {% for pessoa in pessoas %}
+    {% set b = status_badge('user', pessoa.status) %}
+    <a class="card" href="{{ url_for('talentos.perfil', user_id=pessoa.id) }}">
+        <div class="card-title">
+            <span class="card-title-with-avatar">
+                {% if pessoa.photo_filename %}
+                <img class="avatar avatar-sm" src="{{ url_for('static', filename='uploads/pessoas/' + pessoa.photo_filename) }}" alt="">
+                {% else %}
+                <span class="avatar avatar-sm">{{ pessoa.public_name[0] }}</span>
+                {% endif %}
+                {{ pessoa.public_name }}
+            </span>
+            <span class="badge badge-{{ b.tone }}">{{ b.icon }} {{ b.label }}</span>
+        </div>
+        <div class="card-sub">📍 {{ pessoa.municipality.name }}{% if pessoa.neighborhood %} · {{ pessoa.neighborhood }}{% endif %}{% if pessoa.current_occupation %} · 💼 {{ pessoa.current_occupation }}{% endif %}</div>
+        <div class="tags">
+            {% for skill in pessoa.has_skills() %}
+            <span class="tag">{{ skill.name }}</span>
+            {% endfor %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<p class="empty">Nenhuma pessoa encontrada com esses filtros.</p>
+{% endif %}
+{% endblock %}

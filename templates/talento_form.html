@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Cadastrar pessoa{% endblock %}
+{% block body_class %}section-talentos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>➕ Cadastrar pessoa</h1>
+</div>
+<p class="page-intro">Preencha o que puder — só o nome e o município são obrigatórios.</p>
+
+<form class="form" method="post" enctype="multipart/form-data">
+    <label>
+        📷 Foto (opcional)
+        <input type="file" name="photo" accept=".png,.jpg,.jpeg,.webp">
+    </label>
+
+    <label>
+        Nome
+        <input type="text" name="public_name" required placeholder="Como você quer ser chamado(a)">
+    </label>
+
+    <label>
+        Cidade
+        <select name="municipality_id" required>
+            {% for m in municipios %}
+            <option value="{{ m.id }}">{{ m.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>
+        Bairro (opcional)
+        <input type="text" name="neighborhood">
+    </label>
+
+    <label>
+        Fale um pouco sobre você (opcional)
+        <textarea name="description" rows="3"></textarea>
+    </label>
+
+    <label>
+        💼 O que você trabalha hoje (opcional)
+        <input type="text" name="current_occupation" placeholder="Ex.: Autônomo, técnico de informática">
+    </label>
+
+    <label>
+        🗓️ Quando você tem disponibilidade (opcional)
+        <input type="text" name="availability" placeholder="Ex.: sábados à tarde">
+    </label>
+
+    <label>
+        ⭐ O que você sabe fazer (separe por vírgula)
+        <input type="text" name="skills_has" placeholder="Ex.: Excel, Informática">
+    </label>
+
+    <label>
+        📚 O que você gostaria de aprender (separe por vírgula, opcional)
+        <input type="text" name="skills_wants" placeholder="Ex.: Inglês">
+    </label>
+
+    <div class="form-actions">
+        <a class="btn" href="{{ url_for('talentos.list') }}">Cancelar</a>
+        <button class="btn btn-primary" type="submit">✅ Salvar</button>
+    </div>
+</form>
+{% endblock %}

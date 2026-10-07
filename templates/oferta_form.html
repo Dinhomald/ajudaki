@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Nova oferta{% endblock %}
+{% block body_class %}section-talentos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🙌 Nova oferta de {{ pessoa.public_name }}</h1>
+</div>
+<p class="page-intro">Diga o que você pode oferecer para a comunidade.</p>
+
+<form class="form" method="post">
+    <label>
+        Título
+        <input type="text" name="title" required placeholder="Ex.: Aulas de Excel">
+    </label>
+
+    <label>
+        Descrição
+        <textarea name="description" rows="3"></textarea>
+    </label>
+
+    <label>
+        Habilidade relacionada
+        <select name="skill_id">
+            <option value="">Não especificada</option>
+            {% for s in skills %}
+            <option value="{{ s.id }}">{{ s.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>
+        Horas disponíveis (opcional)
+        <input type="number" name="hours_available" min="0.5" step="0.5">
+    </label>
+
+    <div class="form-actions">
+        <a class="btn" href="{{ url_for('talentos.perfil', user_id=pessoa.id) }}">Cancelar</a>
+        <button class="btn btn-primary" type="submit">✅ Salvar</button>
+    </div>
+</form>
+{% endblock %}

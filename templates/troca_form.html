@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Solicitar troca{% endblock %}
+{% block body_class %}section-trocas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🔄 Solicitar troca</h1>
+</div>
+<p class="page-intro">Registre quem ajudou quem, para o crédito de horas ficar certinho.</p>
+
+{% if erro %}
+<p class="error">{{ erro }}</p>
+{% endif %}
+
+<form class="form" method="post">
+    <label>
+        👤 Quem ajudou (ganha as horas)
+        <select name="provider_id" required>
+            <option value="">Selecione</option>
+            {% for p in pessoas %}
+            <option value="{{ p.id }}">{{ p.public_name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <p class="hint">Agora escolha quem recebeu a ajuda: uma pessoa OU uma organização (só uma das duas).</p>
+
+    <label>
+        🙋 Recebeu ajuda — se for uma pessoa
+        <select name="requester_user_id">
+            <option value="">—</option>
+            {% for p in pessoas %}
+            <option value="{{ p.id }}">{{ p.public_name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>
+        🏢 Recebeu ajuda — se for uma organização
+        <select name="requester_organization_id">
+            <option value="">—</option>
+            {% for o in organizacoes %}
+            <option value="{{ o.id }}">{{ o.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>
+        Ligada a qual necessidade? (opcional)
+        <select name="need_id">
+            <option value="">—</option>
+            {% for n in necessidades_abertas %}
+            <option value="{{ n.id }}">{{ n.title }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>
+        Horas
+        <input type="number" name="hours" min="0.5" step="0.5" value="1" required>
+    </label>
+
+    <label>
+        Descrição
+        <textarea name="description" rows="2"></textarea>
+    </label>
+
+    <div class="form-actions">
+        <a class="btn" href="{{ url_for('trocas.list') }}">Cancelar</a>
+        <button class="btn btn-primary" type="submit">✅ Solicitar</button>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{{ indicadores.municipio.name }}{% endblock %}
+{% block body_class %}section-territorio{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🗺️ {{ indicadores.municipio.name }}</h1>
+</div>
+
+<div class="stat-row">
+    {% if indicadores.municipio.population %}
+    <div class="kpi" style="--kpi-color: var(--c-green)">
+        <span class="kpi-value">{{ "{:,}".format(indicadores.municipio.population).replace(",", ".") }}</span>
+        <span class="kpi-label">população</span>
+    </div>
+    {% endif %}
+    {% if indicadores.municipio.area_km2 %}
+    <div class="kpi" style="--kpi-color: var(--c-green)">
+        <span class="kpi-value">{{ indicadores.municipio.area_km2 }} km²</span>
+        <span class="kpi-label">área</span>
+    </div>
+    {% endif %}
+</div>
+
+<div class="section">
+    <h2>Recursos cadastrados</h2>
+    <div class="stat-row">
+        <div class="kpi" style="--kpi-color: var(--c-violet)">
+            <span class="kpi-value">{{ indicadores.pessoas_cadastradas }}</span>
+            <span class="kpi-label">👥 pessoas cadastradas</span>
+        </div>
+        <div class="kpi" style="--kpi-color: var(--c-magenta)">
+            <span class="kpi-value">{{ indicadores.organizacoes }}</span>
+            <span class="kpi-label">🏢 organizações</span>
+        </div>
+        <div class="kpi" style="--kpi-color: var(--status-good)">
+            <span class="kpi-value">{{ indicadores.horas_disponiveis }}h</span>
+            <span class="kpi-label">⏱️ horas disponíveis</span>
+        </div>
+        <div class="kpi" style="--kpi-color: var(--c-aqua)">
+            <span class="kpi-value">{{ indicadores.horas_trocadas }}h</span>
+            <span class="kpi-label">🔄 horas trocadas</span>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>🙋 Necessidades</h2>
+    <div class="stat-row">
+        <div class="kpi" style="--kpi-color: var(--c-orange)">
+            <span class="kpi-value">{{ indicadores.necessidades_abertas }}</span>
+            <span class="kpi-label">abertas</span>
+        </div>
+        <div class="kpi" style="--kpi-color: var(--c-blue)">
+            <span class="kpi-value">{{ indicadores.necessidades_atendidas }}</span>
+            <span class="kpi-label">atendidas</span>
+        </div>
+        <div class="kpi" style="--kpi-color: var(--c-aqua)">
+            <span class="kpi-value">{{ indicadores.trocas_realizadas }}</span>
+            <span class="kpi-label">trocas realizadas</span>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>📊 Índice de Ativação Comunitária</h2>
+    <p class="hint">
+        Mostra quantas pessoas e organizações cadastradas estão realmente ativas hoje.
+        Conta assim: (pessoas ativas + organizações ativas) ÷ (total cadastrado) × 100.
+    </p>
+    <div class="stat-row">
+        <div class="kpi" style="--kpi-color: var(--status-good)">
+            <span class="kpi-value">{{ indicadores.ativacao.percentual }}%</span>
+            <span class="kpi-label">ativação geral</span>
+        </div>
+        <div class="kpi" style="--kpi-color: var(--c-violet)">
+            <span class="kpi-value">{{ indicadores.ativacao.pessoas_ativas }}/{{ indicadores.ativacao.pessoas_cadastradas }}</span>
+            <span class="kpi-label">pessoas ativas</span>
+        </div>
+        <div class="kpi" style="--kpi-color: var(--c-magenta)">
+            <span class="kpi-value">{{ indicadores.ativacao.organizacoes_ativas }}/{{ indicadores.ativacao.organizacoes_cadastradas }}</span>
+            <span class="kpi-label">organizações ativas</span>
+        </div>
+    </div>
+</div>
+
+<a class="btn" href="{{ url_for('territorio.list') }}">← Voltar</a>
+{% endblock %}

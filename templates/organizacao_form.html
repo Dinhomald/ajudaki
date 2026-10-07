@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Cadastrar organização{% endblock %}
+{% block body_class %}section-organizacoes{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>➕ Cadastrar organização</h1>
+</div>
+<p class="page-intro">Associações, OSCs e projetos comunitários também podem participar da rede.</p>
+
+<form class="form" method="post">
+    <label>
+        Nome
+        <input type="text" name="name" required>
+    </label>
+
+    <label>
+        Município
+        <select name="municipality_id" required>
+            {% for m in municipios %}
+            <option value="{{ m.id }}">{{ m.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>
+        Área de atuação
+        <input type="text" name="area_of_action" placeholder="Ex.: Educação">
+    </label>
+
+    <label>
+        Descrição
+        <textarea name="description" rows="3"></textarea>
+    </label>
+
+    <label>
+        Habilidades geralmente necessárias (separadas por vírgula)
+        <input type="text" name="needed_skills" placeholder="Ex.: Informática, Design gráfico">
+    </label>
+
+    <div class="form-actions">
+        <a class="btn" href="{{ url_for('organizacoes.list') }}">Cancelar</a>
+        <button class="btn btn-primary" type="submit">✅ Salvar</button>
+    </div>
+</form>
+{% endblock %}

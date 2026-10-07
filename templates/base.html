@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Ajudaki{% endblock %} · Ajudaki</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="{% block body_class %}section-dashboard{% endblock %}">
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a class="brand" href="{{ url_for('dashboard.index') }}">🌱 Ajudaki</a>
+            <nav class="nav">
+                <a href="{{ url_for('dashboard.index') }}" class="nav-item nav-blue {{ 'active' if request.endpoint == 'dashboard.index' else '' }}">🏠 Início</a>
+                <a href="{{ url_for('territorio.list') }}" class="nav-item nav-green {{ 'active' if request.endpoint and request.endpoint.startswith('territorio.') else '' }}">🗺️ Território</a>
+                <a href="{{ url_for('talentos.list') }}" class="nav-item nav-violet {{ 'active' if request.endpoint and request.endpoint.startswith('talentos.') else '' }}">👥 Pessoas</a>
+                <a href="{{ url_for('necessidades.list') }}" class="nav-item nav-orange {{ 'active' if request.endpoint and request.endpoint.startswith('necessidades.') else '' }}">🙋 Necessidades</a>
+                <a href="{{ url_for('trocas.list') }}" class="nav-item nav-aqua {{ 'active' if request.endpoint and request.endpoint.startswith('trocas.') else '' }}">🔄 Trocas</a>
+                <a href="{{ url_for('organizacoes.list') }}" class="nav-item nav-magenta {{ 'active' if request.endpoint and request.endpoint.startswith('organizacoes.') else '' }}">🏢 Organizações</a>
+                <a href="{{ url_for('impacto.index') }}" class="nav-item nav-red {{ 'active' if request.endpoint and request.endpoint.startswith('impacto.') else '' }}">📈 Impacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <span>🌱 Ajudaki · dados fictícios de desenvolvimento</span>
+        </div>
+    </footer>
+</body>
+</html>
