@@ -1,32 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Necessidades{% endblock %}
-{% block body_class %}section-necessidades{% endblock %}
+{% from "_icons.html" import icon %}
+{% block title %}Pedidos{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1>🙋 Necessidades</h1>
-    <a class="btn btn-primary" href="{{ url_for('necessidades.nova') }}">➕ Publicar necessidade</a>
-</div>
-<p class="page-intro">Coisas que pessoas e organizações estão precisando de ajuda.</p>
+<h1 class="page-title">Pedidos de ajuda</h1>
+<p class="page-intro">Pessoas e organizações precisando de uma força.</p>
 
 <form class="filters" method="get">
-    <input type="text" name="habilidade" placeholder="🔎 Buscar por habilidade" value="{{ filtro_habilidade or '' }}">
+    <input type="text" name="habilidade" placeholder="Buscar por habilidade" value="{{ filtro_habilidade or '' }}">
 
-    <select name="municipio">
-        <option value="">Todos os municípios</option>
+    <select name="municipio" onchange="this.form.submit()">
+        <option value="">Todas as cidades</option>
         {% for m in municipios %}
         <option value="{{ m.id }}" {{ 'selected' if filtro_municipio == m.id else '' }}>{{ m.name }}</option>
         {% endfor %}
     </select>
 
-    <select name="status">
-        <option value="">Todas as situações</option>
-        <option value="aberta" {{ 'selected' if filtro_status == 'aberta' else '' }}>Aberta</option>
-        <option value="atendida" {{ 'selected' if filtro_status == 'atendida' else '' }}>Atendida</option>
-        <option value="cancelada" {{ 'selected' if filtro_status == 'cancelada' else '' }}>Cancelada</option>
+    <select name="status" onchange="this.form.submit()">
+        <option value="">Todos</option>
+        <option value="aberta" {{ 'selected' if filtro_status == 'aberta' else '' }}>Abertos</option>
+        <option value="atendida" {{ 'selected' if filtro_status == 'atendida' else '' }}>Atendidos</option>
+        <option value="cancelada" {{ 'selected' if filtro_status == 'cancelada' else '' }}>Cancelados</option>
     </select>
-
-    <button class="btn btn-primary" type="submit">Filtrar</button>
 </form>
 
 {% if necessidades %}
@@ -36,18 +31,19 @@
     <a class="card" href="{{ url_for('necessidades.detail', need_id=n.id) }}">
         <div class="card-title">
             <span>{{ n.title }}</span>
-            <span class="badge badge-{{ b.tone }}">{{ b.icon }} {{ b.label }}</span>
+            <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
         </div>
-        <div class="card-sub">{{ n.requester_display_name }} · 📍 {{ n.municipality.name }}{% if n.location %} · {{ n.location }}{% endif %}</div>
+        <div class="meta">
+            <span>{{ n.requester_display_name }}</span>
+            <span>{{ icon('pin') }} {{ n.municipality.name }}</span>
+            <span>{{ icon('clock') }} {{ n.hours }}h</span>
+        </div>
         {% if n.description %}<p>{{ n.description }}</p>{% endif %}
-        <div class="tags">
-            <span class="tag">⏱️ {{ n.hours }} h</span>
-            {% if n.skill %}<span class="tag tag-muted">{{ n.skill.name }}</span>{% endif %}
-        </div>
+        {% if n.skill %}<div class="tags"><span class="tag">{{ n.skill.name }}</span></div>{% endif %}
     </a>
     {% endfor %}
 </div>
 {% else %}
-<p class="empty">Nenhuma necessidade encontrada com esses filtros.</p>
+<p class="empty">Nenhum pedido encontrado.</p>
 {% endif %}
 {% endblock %}

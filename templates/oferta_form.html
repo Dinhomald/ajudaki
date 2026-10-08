@@ -1,11 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Nova oferta{% endblock %}
-{% block body_class %}section-talentos{% endblock %}
-
 {% block content %}
-<div class="page-header">
-    <h1>🙌 Nova oferta de {{ pessoa.public_name }}</h1>
-</div>
+<h1 class="page-title">Nova oferta de {{ pessoa.public_name }}</h1>
 <p class="page-intro">Diga o que você pode oferecer para a comunidade.</p>
 
 <form class="form" method="post">
@@ -36,7 +32,7 @@
 
     <div class="form-actions">
         <a class="btn" href="{{ url_for('talentos.perfil', user_id=pessoa.id) }}">Cancelar</a>
-        <button class="btn btn-primary" type="submit">✅ Salvar</button>
+        <button class="btn btn-primary" type="submit">Salvar</button>
     </div>
 </form>
 {% endblock %}

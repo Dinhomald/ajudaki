@@ -15,6 +15,12 @@ python seed.py                 # popula dados fictícios de desenvolvimento
 python app.py                  # http://127.0.0.1:5000
 ```
 
+## Publicar no Render
+
+O `render.yaml` já descreve o serviço. No Render: **New → Blueprint**,
+escolha este repositório e confirme. A cada início o `seed.py` recria os
+dados de exemplo (o disco do plano grátis não guarda o SQLite).
+
 ## Estrutura
 
 ```

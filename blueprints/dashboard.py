@@ -9,3 +9,8 @@ dashboard_bp = Blueprint("dashboard", __name__)
 def index():
     resumo = dashboard_summary()
     return render_template("dashboard.html", resumo=resumo)
+
+
+@dashboard_bp.route("/mais")
+def mais():
+    return render_template("mais.html")

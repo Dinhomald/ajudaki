@@ -22,27 +22,27 @@ from models import (
 )
 
 
-# ---------- SELOS DE STATUS (ícone + cor + texto, nunca só cor) ----------
+# ---------- SELOS DE STATUS (cor + texto, nunca só cor) ----------
 # tone aponta para uma classe .badge-<tone> no CSS (good/warning/critical/info/muted).
 
 STATUS_META = {
     "user": {
-        "ativo": {"tone": "good", "icon": "✅", "label": "Ativo"},
-        "inativo": {"tone": "muted", "icon": "⏸️", "label": "Inativo"},
+        "ativo": {"tone": "good", "label": "Ativo"},
+        "inativo": {"tone": "muted", "label": "Inativo"},
     },
     "org": {
-        "ativa": {"tone": "good", "icon": "✅", "label": "Ativa"},
-        "inativa": {"tone": "muted", "icon": "⏸️", "label": "Inativa"},
+        "ativa": {"tone": "good", "label": "Ativa"},
+        "inativa": {"tone": "muted", "label": "Inativa"},
     },
     "need": {
-        "aberta": {"tone": "good", "icon": "🟢", "label": "Aberta"},
-        "atendida": {"tone": "info", "icon": "✔️", "label": "Atendida"},
-        "cancelada": {"tone": "critical", "icon": "⛔", "label": "Cancelada"},
+        "aberta": {"tone": "good", "label": "Aberto"},
+        "atendida": {"tone": "info", "label": "Atendido"},
+        "cancelada": {"tone": "critical", "label": "Cancelado"},
     },
     "transaction": {
-        "pendente": {"tone": "warning", "icon": "⏳", "label": "Pendente"},
-        "concluida": {"tone": "good", "icon": "✅", "label": "Concluída"},
-        "cancelada": {"tone": "critical", "icon": "⛔", "label": "Cancelada"},
+        "pendente": {"tone": "warning", "label": "Pendente"},
+        "concluida": {"tone": "good", "label": "Concluída"},
+        "cancelada": {"tone": "critical", "label": "Cancelada"},
     },
 }
 

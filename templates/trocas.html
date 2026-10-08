@@ -1,65 +1,47 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block title %}Trocas{% endblock %}
-{% block body_class %}section-trocas{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1>🔄 Banco de Tempo</h1>
-    <a class="btn btn-primary" href="{{ url_for('trocas.nova') }}">➕ Solicitar troca</a>
-</div>
-<p class="page-intro">1 hora ajudando = 1 crédito. Aqui fica o extrato de todas as trocas.</p>
+<h1 class="page-title">Trocas</h1>
+<p class="page-intro">1 hora ajudando alguém = 1 hora de crédito.</p>
 
 <form class="filters" method="get">
-    <select name="status">
-        <option value="">Todas as situações</option>
-        <option value="pendente" {{ 'selected' if filtro_status == 'pendente' else '' }}>⏳ Pendente</option>
-        <option value="concluida" {{ 'selected' if filtro_status == 'concluida' else '' }}>✅ Concluída</option>
-        <option value="cancelada" {{ 'selected' if filtro_status == 'cancelada' else '' }}>⛔ Cancelada</option>
+    <select name="status" onchange="this.form.submit()">
+        <option value="">Todas</option>
+        <option value="pendente" {{ 'selected' if filtro_status == 'pendente' else '' }}>Pendentes</option>
+        <option value="concluida" {{ 'selected' if filtro_status == 'concluida' else '' }}>Concluídas</option>
+        <option value="cancelada" {{ 'selected' if filtro_status == 'cancelada' else '' }}>Canceladas</option>
     </select>
-    <button class="btn btn-primary" type="submit">Filtrar</button>
 </form>
 
 {% if trocas %}
-<div class="table-wrap">
-    <table class="data-table">
-        <caption>Extrato de trocas registradas, da mais recente para a mais antiga.</caption>
-        <thead>
-            <tr>
-                <th>Quem ajudou</th>
-                <th>Quem recebeu ajuda</th>
-                <th>Horas</th>
-                <th>Situação</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for t in trocas %}
-            {% set b = status_badge('transaction', t.status) %}
-            <tr>
-                <td>{{ t.provider.public_name }}</td>
-                <td>{{ t.requester_display_name }}{% if t.need %}<br><span class="card-sub">sobre "{{ t.need.title }}"</span>{% endif %}</td>
-                <td>⏱️ {{ t.hours }} h</td>
-                <td><span class="badge badge-{{ b.tone }}">{{ b.icon }} {{ b.label }}</span></td>
-                <td>
-                    {% if t.status == 'pendente' %}
-                    <div class="table-actions">
-                        <form method="post" action="{{ url_for('trocas.concluir', troca_id=t.id) }}">
-                            <button class="btn btn-primary" type="submit">✅ Concluir</button>
-                        </form>
-                        <form method="post" action="{{ url_for('trocas.cancelar', troca_id=t.id) }}">
-                            <button class="btn" type="submit">✖ Cancelar</button>
-                        </form>
-                    </div>
-                    {% else %}
-                    <span class="card-sub">—</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card-list">
+    {% for t in trocas %}
+    {% set b = status_badge('transaction', t.status) %}
+    <div class="card">
+        <div class="card-title">
+            <span>{{ t.provider.public_name }} → {{ t.requester_display_name }}</span>
+            <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
+        </div>
+        <div class="meta">
+            <span>{{ icon('clock') }} {{ t.hours }}h</span>
+            {% if t.need %}<span>{{ t.need.title }}</span>{% endif %}
+        </div>
+        {% if t.status == 'pendente' %}
+        <div class="card-actions">
+            <form method="post" action="{{ url_for('trocas.cancelar', troca_id=t.id) }}">
+                <button class="btn btn-sm" type="submit">Cancelar</button>
+            </form>
+            <form method="post" action="{{ url_for('trocas.concluir', troca_id=t.id) }}">
+                <button class="btn btn-sm btn-primary" type="submit">Concluir</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
 </div>
 {% else %}
-<p class="empty">Nenhuma troca encontrada com esses filtros.</p>
+<p class="empty">Nenhuma troca encontrada.</p>
 {% endif %}
 {% endblock %}

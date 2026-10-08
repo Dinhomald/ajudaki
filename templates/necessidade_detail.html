@@ -1,45 +1,43 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block title %}{{ need.title }}{% endblock %}
-{% block body_class %}section-necessidades{% endblock %}
 
 {% block content %}
 {% set b = status_badge('need', need.status) %}
-<div class="page-header">
-    <h1>{{ need.title }}</h1>
-    <span class="badge badge-{{ b.tone }}">{{ b.icon }} {{ b.label }}</span>
-</div>
+<a class="back" href="{{ url_for('necessidades.list') }}">{{ icon('back', 20) }} Pedidos</a>
 
-<p class="card-sub">{{ need.requester_display_name }} · 📍 {{ need.municipality.name }}{% if need.location %} · {{ need.location }}{% endif %}</p>
+<span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
+<h1 class="page-title">{{ need.title }}</h1>
+
+<div class="meta">
+    <span>{{ need.requester_display_name }}</span>
+    <span>{{ icon('pin') }} {{ need.municipality.name }}{% if need.location %} · {{ need.location }}{% endif %}</span>
+    <span>{{ icon('clock') }} {{ need.hours }}h</span>
+</div>
 
 {% if need.description %}<p>{{ need.description }}</p>{% endif %}
 
-<div class="tags">
-    <span class="tag">⏱️ {{ need.hours }} h</span>
-    {% if need.skill %}<span class="tag tag-muted">{{ need.skill.name }}</span>{% endif %}
-</div>
+{% if need.skill %}<div class="tags"><span class="tag">{{ need.skill.name }}</span></div>{% endif %}
 
 <form class="status-actions" method="post" action="{{ url_for('necessidades.alterar_status', need_id=need.id) }}">
-    <span>Mudar situação:</span>
-    <button class="btn" type="submit" name="status" value="aberta">🟢 Aberta</button>
-    <button class="btn" type="submit" name="status" value="atendida">✔️ Atendida</button>
-    <button class="btn" type="submit" name="status" value="cancelada">⛔ Cancelada</button>
+    <span>Situação</span>
+    <div class="segmented">
+        <button type="submit" name="status" value="aberta" class="{{ 'on' if need.status == 'aberta' }}">Aberto</button>
+        <button type="submit" name="status" value="atendida" class="{{ 'on' if need.status == 'atendida' }}">Atendido</button>
+        <button type="submit" name="status" value="cancelada" class="{{ 'on' if need.status == 'cancelada' }}">Cancelado</button>
+    </div>
 </form>
 
 <div class="section">
-    <h2>🙌 Quem pode ajudar</h2>
-    <p class="hint">
-        A lista abaixo é montada automaticamente: primeiro quem tem a habilidade pedida,
-        depois priorizando quem mora na mesma cidade e informou disponibilidade.
-    </p>
-
+    <h2>Quem pode ajudar</h2>
     {% if not need.skill %}
-    <p class="empty">Escolha uma habilidade relacionada para gerar essa lista.</p>
+    <p class="empty">Escolha uma habilidade no pedido para ver sugestões.</p>
     {% elif recomendacoes %}
     <div class="card-list">
         {% for r in recomendacoes %}
         <a class="card" href="{{ url_for('talentos.perfil', user_id=r.pessoa.id) }}">
             <div class="card-title"><span>{{ r.pessoa.public_name }}</span></div>
-            <div class="card-sub">📍 {{ r.pessoa.municipality.name }}</div>
+            <div class="meta"><span>{{ icon('pin') }} {{ r.pessoa.municipality.name }}</span></div>
             <ul class="reasons">
                 {% for motivo in r.motivos %}
                 <li>{{ motivo }}</li>
@@ -49,9 +47,7 @@
         {% endfor %}
     </div>
     {% else %}
-    <p class="empty">Nenhuma pessoa ativa compatível encontrada ainda.</p>
+    <p class="empty">Ninguém com essa habilidade por enquanto.</p>
     {% endif %}
 </div>
-
-<a class="btn" href="{{ url_for('necessidades.list') }}">← Voltar</a>
 {% endblock %}

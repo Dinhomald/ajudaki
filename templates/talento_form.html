@@ -1,16 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Cadastrar pessoa{% endblock %}
-{% block body_class %}section-talentos{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1>➕ Cadastrar pessoa</h1>
-</div>
-<p class="page-intro">Preencha o que puder — só o nome e o município são obrigatórios.</p>
+<h1 class="page-title">Cadastrar pessoa</h1>
+<p class="page-intro">Só o nome e a cidade são obrigatórios.</p>
 
 <form class="form" method="post" enctype="multipart/form-data">
     <label>
-        📷 Foto (opcional)
+        Foto (opcional)
         <input type="file" name="photo" accept=".png,.jpg,.jpeg,.webp">
     </label>
 
@@ -39,28 +36,29 @@
     </label>
 
     <label>
-        💼 O que você trabalha hoje (opcional)
+        Com o que você trabalha hoje (opcional)
         <input type="text" name="current_occupation" placeholder="Ex.: Autônomo, técnico de informática">
     </label>
 
     <label>
-        🗓️ Quando você tem disponibilidade (opcional)
+        Quando você tem tempo livre (opcional)
         <input type="text" name="availability" placeholder="Ex.: sábados à tarde">
     </label>
 
     <label>
-        ⭐ O que você sabe fazer (separe por vírgula)
+        O que você sabe fazer
         <input type="text" name="skills_has" placeholder="Ex.: Excel, Informática">
     </label>
 
     <label>
-        📚 O que você gostaria de aprender (separe por vírgula, opcional)
+        O que você quer aprender (opcional)
         <input type="text" name="skills_wants" placeholder="Ex.: Inglês">
     </label>
+    <p class="hint">Separe as habilidades por vírgula.</p>
 
     <div class="form-actions">
         <a class="btn" href="{{ url_for('talentos.list') }}">Cancelar</a>
-        <button class="btn btn-primary" type="submit">✅ Salvar</button>
+        <button class="btn btn-primary" type="submit">Salvar</button>
     </div>
 </form>
 {% endblock %}

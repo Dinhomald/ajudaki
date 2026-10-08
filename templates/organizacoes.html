@@ -1,46 +1,50 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block title %}Organizações{% endblock %}
-{% block body_class %}section-organizacoes{% endblock %}
 
 {% block content %}
+<a class="back" href="{{ url_for('dashboard.mais') }}">{{ icon('back', 20) }} Mais</a>
 <div class="page-header">
-    <h1>🏢 Organizações</h1>
-    <a class="btn btn-primary" href="{{ url_for('organizacoes.nova') }}">➕ Cadastrar organização</a>
+    <h1>Organizações</h1>
+    <a class="btn btn-sm" href="{{ url_for('organizacoes.nova') }}">{{ icon('plus', 16) }} Cadastrar</a>
 </div>
-<p class="page-intro">Associações, OSCs e projetos comunitários cadastrados na rede.</p>
+<p class="page-intro">Associações, OSCs e projetos comunitários da rede.</p>
 
 <form class="filters" method="get">
-    <input type="text" name="area" placeholder="🔎 Buscar por área de atuação" value="{{ filtro_area or '' }}">
+    <input type="text" name="area" placeholder="Buscar por área de atuação" value="{{ filtro_area or '' }}">
 
-    <select name="municipio">
-        <option value="">Todos os municípios</option>
+    <select name="municipio" onchange="this.form.submit()">
+        <option value="">Todas as cidades</option>
         {% for m in municipios %}
         <option value="{{ m.id }}" {{ 'selected' if filtro_municipio == m.id else '' }}>{{ m.name }}</option>
         {% endfor %}
     </select>
-
-    <button class="btn btn-primary" type="submit">Filtrar</button>
 </form>
 
 {% if organizacoes %}
 <div class="card-list">
     {% for o in organizacoes %}
-    {% set b = status_badge('org', o.status) %}
     <a class="card" href="{{ url_for('organizacoes.perfil', organization_id=o.id) }}">
         <div class="card-title">
             <span>{{ o.name }}</span>
-            <span class="badge badge-{{ b.tone }}">{{ b.icon }} {{ b.label }}</span>
+            {% if o.status != 'ativa' %}
+            {% set b = status_badge('org', o.status) %}
+            <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
+            {% endif %}
         </div>
-        <div class="card-sub">📍 {{ o.municipality.name }}{% if o.area_of_action %} · {{ o.area_of_action }}{% endif %}</div>
+        <div class="meta">
+            <span>{{ icon('pin') }} {{ o.municipality.name }}</span>
+            {% if o.area_of_action %}<span>{{ o.area_of_action }}</span>{% endif %}
+        </div>
         <div class="tags">
             {% for skill_link in o.needed_skills %}
-            <span class="tag">{{ skill_link.skill.name }}</span>
+            <span class="tag tag-muted">{{ skill_link.skill.name }}</span>
             {% endfor %}
         </div>
     </a>
     {% endfor %}
 </div>
 {% else %}
-<p class="empty">Nenhuma organização encontrada com esses filtros.</p>
+<p class="empty">Nenhuma organização encontrada.</p>
 {% endif %}
 {% endblock %}

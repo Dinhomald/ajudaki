@@ -1,23 +1,30 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block title %}Impacto{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1>Impacto</h1>
-</div>
-<p class="hint">Números fictícios de desenvolvimento, calculados a partir dos cadastros e transações registradas.</p>
+<a class="back" href="{{ url_for('dashboard.mais') }}">{{ icon('back', 20) }} Mais</a>
+<h1 class="page-title">Impacto</h1>
+<p class="page-intro">O que a rede já fez junta.</p>
 
-<div class="stat-row stat-row-big">
-    <div class="stat"><span class="stat-value">{{ resumo.pessoas_conectadas }}</span><span class="stat-label">pessoas conectadas</span></div>
-    <div class="stat"><span class="stat-value">{{ resumo.organizacoes }}</span><span class="stat-label">organizações</span></div>
-    <div class="stat"><span class="stat-value">{{ resumo.horas_oferecidas }}h</span><span class="stat-label">horas oferecidas</span></div>
-    <div class="stat"><span class="stat-value">{{ resumo.horas_trocadas }}h</span><span class="stat-label">horas trocadas</span></div>
-    <div class="stat"><span class="stat-value">{{ resumo.conexoes_realizadas }}</span><span class="stat-label">conexões realizadas</span></div>
-    <div class="stat"><span class="stat-value">{{ resumo.necessidades_atendidas }}</span><span class="stat-label">necessidades atendidas</span></div>
+<div class="highlight">
+    <div class="stat-row">
+        <div class="stat"><span class="stat-value">{{ resumo.horas_trocadas }}h</span><span class="stat-label">horas trocadas</span></div>
+        <div class="stat"><span class="stat-value">{{ resumo.conexoes_realizadas }}</span><span class="stat-label">conexões feitas</span></div>
+    </div>
 </div>
 
 <div class="section">
-    <h2>Evolução das trocas concluídas</h2>
+    <div class="stat-row">
+        <div class="stat"><span class="stat-value">{{ resumo.pessoas_conectadas }}</span><span class="stat-label">pessoas conectadas</span></div>
+        <div class="stat"><span class="stat-value">{{ resumo.organizacoes }}</span><span class="stat-label">organizações</span></div>
+        <div class="stat"><span class="stat-value">{{ resumo.horas_oferecidas }}h</span><span class="stat-label">horas oferecidas</span></div>
+        <div class="stat"><span class="stat-value">{{ resumo.necessidades_atendidas }}</span><span class="stat-label">pedidos atendidos</span></div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Trocas por mês</h2>
     {% if resumo.evolucao_trocas %}
     <ul class="ranked-list">
         {% for mes, total, horas in resumo.evolucao_trocas %}
@@ -28,9 +35,4 @@
     <p class="empty">Ainda não há trocas concluídas.</p>
     {% endif %}
 </div>
-
-<p class="hint">
-    Valor econômico estimado do tempo: não calculado nesta versão — quando adicionado, será apresentado
-    apenas como métrica analítica, nunca como moeda do sistema.
-</p>
 {% endblock %}

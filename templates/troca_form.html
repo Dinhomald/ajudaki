@@ -1,12 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Solicitar troca{% endblock %}
-{% block body_class %}section-trocas{% endblock %}
+{% block title %}Registrar troca{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1>🔄 Solicitar troca</h1>
-</div>
-<p class="page-intro">Registre quem ajudou quem, para o crédito de horas ficar certinho.</p>
+<h1 class="page-title">Registrar troca</h1>
+<p class="page-intro">Quem ajudou ganha as horas como crédito.</p>
 
 {% if erro %}
 <p class="error">{{ erro }}</p>
@@ -14,7 +11,7 @@
 
 <form class="form" method="post">
     <label>
-        👤 Quem ajudou (ganha as horas)
+        Quem ajudou
         <select name="provider_id" required>
             <option value="">Selecione</option>
             {% for p in pessoas %}
@@ -23,10 +20,11 @@
         </select>
     </label>
 
-    <p class="hint">Agora escolha quem recebeu a ajuda: uma pessoa OU uma organização (só uma das duas).</p>
+    <p class="form-group-title">Quem recebeu a ajuda</p>
+    <p class="hint">Escolha uma pessoa ou uma organização.</p>
 
     <label>
-        🙋 Recebeu ajuda — se for uma pessoa
+        Pessoa
         <select name="requester_user_id">
             <option value="">—</option>
             {% for p in pessoas %}
@@ -36,7 +34,7 @@
     </label>
 
     <label>
-        🏢 Recebeu ajuda — se for uma organização
+        Organização
         <select name="requester_organization_id">
             <option value="">—</option>
             {% for o in organizacoes %}
@@ -46,7 +44,7 @@
     </label>
 
     <label>
-        Ligada a qual necessidade? (opcional)
+        Pedido relacionado (opcional)
         <select name="need_id">
             <option value="">—</option>
             {% for n in necessidades_abertas %}
@@ -67,7 +65,7 @@
 
     <div class="form-actions">
         <a class="btn" href="{{ url_for('trocas.list') }}">Cancelar</a>
-        <button class="btn btn-primary" type="submit">✅ Solicitar</button>
+        <button class="btn btn-primary" type="submit">Registrar</button>
     </div>
 </form>
 {% endblock %}

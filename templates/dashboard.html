@@ -1,74 +1,53 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Início{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1>Ajudaki</h1>
-</div>
-<p class="hint">Rede de Recursos Comunitários · visão geral (dados fictícios de desenvolvimento)</p>
+<h1 class="page-title">Olá!</h1>
+<p class="page-intro">Veja como a rede está se ajudando.</p>
 
-<div class="stat-row stat-row-big">
-    <div class="stat"><span class="stat-value">{{ resumo.pessoas }}</span><span class="stat-label">Pessoas</span></div>
-    <div class="stat"><span class="stat-value">{{ resumo.organizacoes }}</span><span class="stat-label">Organizações</span></div>
-    <div class="stat"><span class="stat-value">{{ resumo.horas_disponiveis }}h</span><span class="stat-label">Disponíveis</span></div>
-    <div class="stat"><span class="stat-value">{{ resumo.horas_trocadas }}h</span><span class="stat-label">Trocadas</span></div>
-</div>
-
-<div class="section-grid">
-    <div class="section">
-        <h2>Habilidades mais ofertadas</h2>
-        {% if resumo.top_habilidades_ofertadas %}
-        <ul class="ranked-list">
-            {% for nome, total in resumo.top_habilidades_ofertadas %}
-            <li><span>{{ nome }}</span><span class="ranked-value">{{ total }}</span></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="empty">Ainda não há ofertas suficientes.</p>
-        {% endif %}
-    </div>
-
-    <div class="section">
-        <h2>Necessidades mais procuradas</h2>
-        {% if resumo.top_habilidades_procuradas %}
-        <ul class="ranked-list">
-            {% for nome, total in resumo.top_habilidades_procuradas %}
-            <li><span>{{ nome }}</span><span class="ranked-value">{{ total }}</span></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="empty">Ainda não há necessidades suficientes.</p>
-        {% endif %}
-    </div>
-</div>
-
-<div class="section">
-    <h2>Necessidades</h2>
+<div class="highlight">
     <div class="stat-row">
-        <div class="stat"><span class="stat-value">{{ resumo.necessidades_abertas }}</span><span class="stat-label">abertas</span></div>
-        <div class="stat"><span class="stat-value">{{ resumo.necessidades_atendidas }}</span><span class="stat-label">atendidas</span></div>
+        <div class="stat"><span class="stat-value">{{ resumo.pessoas }}</span><span class="stat-label">pessoas</span></div>
+        <div class="stat"><span class="stat-value">{{ resumo.organizacoes }}</span><span class="stat-label">organizações</span></div>
+        <div class="stat"><span class="stat-value">{{ resumo.horas_disponiveis }}h</span><span class="stat-label">disponíveis para ajudar</span></div>
+        <div class="stat"><span class="stat-value">{{ resumo.horas_trocadas }}h</span><span class="stat-label">já trocadas</span></div>
     </div>
 </div>
 
 <div class="section">
-    <h2>Evolução das trocas concluídas</h2>
-    {% if resumo.evolucao_trocas %}
+    <div class="section-header">
+        <h2>Pedidos</h2>
+        <a href="{{ url_for('necessidades.list') }}">Ver todos</a>
+    </div>
+    <div class="stat-row">
+        <div class="stat"><span class="stat-value">{{ resumo.necessidades_abertas }}</span><span class="stat-label">esperando ajuda</span></div>
+        <div class="stat"><span class="stat-value">{{ resumo.necessidades_atendidas }}</span><span class="stat-label">já atendidos</span></div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>O que mais pedem</h2>
+    {% if resumo.top_habilidades_procuradas %}
     <ul class="ranked-list">
-        {% for mes, total, horas in resumo.evolucao_trocas %}
-        <li><span>{{ mes }}</span><span class="ranked-value">{{ total }} trocas · {{ horas }}h</span></li>
+        {% for nome, total in resumo.top_habilidades_procuradas %}
+        <li><span>{{ nome }}</span><span class="ranked-value">{{ total }}</span></li>
         {% endfor %}
     </ul>
     {% else %}
-    <p class="empty">Ainda não há trocas concluídas.</p>
+    <p class="empty">Ainda não há pedidos.</p>
     {% endif %}
 </div>
 
 <div class="section">
-    <h2>Índice de Ativação Comunitária</h2>
-    <div class="stat-row">
-        <div class="stat"><span class="stat-value">{{ resumo.ativacao.percentual }}%</span><span class="stat-label">ativação geral</span></div>
-    </div>
+    <h2>O que mais oferecem</h2>
+    {% if resumo.top_habilidades_ofertadas %}
+    <ul class="ranked-list">
+        {% for nome, total in resumo.top_habilidades_ofertadas %}
+        <li><span>{{ nome }}</span><span class="ranked-value">{{ total }}</span></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">Ainda não há ofertas.</p>
+    {% endif %}
 </div>
-
-<p class="hint">Mapa territorial: previsto para uma próxima fase do produto.</p>
 {% endblock %}

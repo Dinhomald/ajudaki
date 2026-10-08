@@ -1,11 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Cadastrar organização{% endblock %}
-{% block body_class %}section-organizacoes{% endblock %}
-
 {% block content %}
-<div class="page-header">
-    <h1>➕ Cadastrar organização</h1>
-</div>
+<h1 class="page-title">Cadastrar organização</h1>
 <p class="page-intro">Associações, OSCs e projetos comunitários também podem participar da rede.</p>
 
 <form class="form" method="post">
@@ -40,7 +36,7 @@
 
     <div class="form-actions">
         <a class="btn" href="{{ url_for('organizacoes.list') }}">Cancelar</a>
-        <button class="btn btn-primary" type="submit">✅ Salvar</button>
+        <button class="btn btn-primary" type="submit">Salvar</button>
     </div>
 </form>
 {% endblock %}
