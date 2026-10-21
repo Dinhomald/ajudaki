@@ -18,6 +18,8 @@
     <span class="demo-note">Dados de demonstração</span>
 </div>
 
+{% if erro %}<p class="error">{{ erro }}</p>{% endif %}
+
 {% if need.description or need.skill %}
 <div class="desc-card">
     {% if need.description %}<p style="margin: 0">{{ need.description }}</p>{% endif %}
@@ -34,31 +36,106 @@
     </div>
 </form>
 
+{% set horas = '%g'|format(need.hours) %}
+{% set ajuda_feita = need.transactions|selectattr('status', 'equalto', 'concluida')|first %}
+{% set pode_assumir = need.requester_user_id or need.requester_organization_id %}
+
+{% if ajuda_combinada %}
+{# Alguém já topou: falta confirmar que a ajuda aconteceu. #}
+{% set quem = ajuda_combinada.provider.public_name|sem_ficticio %}
+<div class="section">
+    <h2>Ajuda combinada</h2>
+    <div class="card card-accent card-accent-warning">
+        <a class="person-link" href="{{ url_for('talentos.perfil', user_id=ajuda_combinada.provider.id) }}">
+            {{ avatar(ajuda_combinada.provider) }}
+            <div class="person-info">
+                <div class="person-head"><strong>{{ quem }} vai ajudar</strong><span class="badge badge-warning">Pendente</span></div>
+                <span class="swap-credit pending">{{ quem }} ganha {{ horas }}h quando confirmar</span>
+            </div>
+        </a>
+        <div class="card-actions">
+            <form method="post" action="{{ url_for('trocas.cancelar', troca_id=ajuda_combinada.id) }}">
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button class="btn btn-sm" type="submit">Cancelar</button>
+            </form>
+            <form method="post" action="{{ url_for('trocas.concluir', troca_id=ajuda_combinada.id) }}">
+                <input type="hidden" name="next" value="{{ request.path }}">
+                <button class="btn btn-sm btn-primary" type="submit">Confirmar ajuda</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% elif ajuda_feita %}
+{% set quem = ajuda_feita.provider.public_name|sem_ficticio %}
+<div class="section">
+    <h2>Quem ajudou</h2>
+    <a class="card card-accent card-accent-good person-card" href="{{ url_for('talentos.perfil', user_id=ajuda_feita.provider.id) }}">
+        {{ avatar(ajuda_feita.provider) }}
+        <div class="person-info">
+            <div class="person-head"><strong>{{ quem }} ajudou</strong>{{ icon('chevron', 18) }}</div>
+            <span class="swap-credit">+{{ '%g'|format(ajuda_feita.hours) }}h de crédito para {{ quem }}</span>
+        </div>
+    </a>
+</div>
+{% endif %}
+
+{% if need.status == 'aberta' and not ajuda_combinada %}
 <div class="section">
     <h2>Quem pode ajudar {% if recomendacoes %}<span class="count-pill">{{ recomendacoes|length }}</span>{% endif %}</h2>
-    {% if need.status != 'aberta' %}
-    <p class="empty">Sugestões aparecem só para pedidos abertos.</p>
-    {% elif not need.skill %}
+
+    {% if not pode_assumir %}
+    <p class="error">Quem pediu ainda não tem cadastro, então não dá para combinar a ajuda por aqui. Cadastre a pessoa ou organização primeiro.</p>
+    {% endif %}
+
+    {% if not need.skill %}
     <p class="empty">Escolha uma habilidade no pedido para ver sugestões.</p>
     {% elif recomendacoes %}
     <div class="card-list">
         {% for r in recomendacoes %}
-        <a class="card person-card" href="{{ url_for('talentos.perfil', user_id=r.pessoa.id) }}">
-            {{ avatar(r.pessoa) }}
-            <div class="person-info">
-                <div class="person-head"><strong>{{ r.pessoa.public_name|sem_ficticio }}</strong>{{ icon('chevron', 18) }}</div>
-                <div class="meta"><span>{{ icon('pin') }} {{ r.pessoa.municipality.name }}</span></div>
-                <ul class="reasons">
-                    {% for motivo in r.motivos %}
-                    <li>{{ motivo }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </a>
+        <div class="card">
+            <a class="person-link" href="{{ url_for('talentos.perfil', user_id=r.pessoa.id) }}">
+                {{ avatar(r.pessoa) }}
+                <div class="person-info">
+                    <div class="person-head"><strong>{{ r.pessoa.public_name|sem_ficticio }}</strong>{{ icon('chevron', 18) }}</div>
+                    <div class="meta"><span>{{ icon('pin') }} {{ r.pessoa.municipality.name }}</span></div>
+                    <ul class="reasons">
+                        {% for motivo in r.motivos %}
+                        <li>{{ motivo }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </a>
+            {% if pode_assumir %}
+            <form method="post" action="{{ url_for('necessidades.assumir', need_id=need.id) }}">
+                <input type="hidden" name="provider_id" value="{{ r.pessoa.id }}">
+                <button class="btn btn-primary btn-block" type="submit">{{ icon('hand', 18) }} Chamar para ajudar</button>
+            </form>
+            {% endif %}
+        </div>
         {% endfor %}
     </div>
     {% else %}
     <p class="empty">Ninguém com essa habilidade por enquanto.</p>
     {% endif %}
+
+    {% if pode_assumir and outras_pessoas %}
+    <details class="other-helper">
+        <summary>Outra pessoa vai ajudar</summary>
+        <form class="form" method="post" action="{{ url_for('necessidades.assumir', need_id=need.id) }}">
+            <label>
+                <span class="label-text">Quem vai ajudar</span>
+                <select name="provider_id" required>
+                    <option value="">Selecione</option>
+                    {% for p in outras_pessoas %}
+                    <option value="{{ p.id }}">{{ p.public_name|sem_ficticio }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button class="btn btn-primary" type="submit">Combinar ajuda</button>
+        </form>
+    </details>
+    {% endif %}
 </div>
+{% endif %}
 {% endblock %}

@@ -70,6 +70,14 @@ def nova():
     )
 
 
+def back_to_origin():
+    """Volta para a tela de onde a ação veio (ex.: detalhe do pedido); só aceita caminhos internos."""
+    destino = request.form.get("next", "")
+    if destino.startswith("/") and not destino.startswith("//"):
+        return redirect(destino)
+    return redirect(url_for("trocas.list"))
+
+
 @trocas_bp.route("/<int:troca_id>/concluir", methods=["POST"])
 def concluir(troca_id):
     troca = TimeTransaction.query.get_or_404(troca_id)
@@ -79,7 +87,7 @@ def concluir(troca_id):
         if troca.need_id:
             troca.need.status = "atendida"
         db.session.commit()
-    return redirect(url_for("trocas.list"))
+    return back_to_origin()
 
 
 @trocas_bp.route("/<int:troca_id>/cancelar", methods=["POST"])
@@ -88,4 +96,4 @@ def cancelar(troca_id):
     if troca.status == "pendente":
         troca.status = "cancelada"
         db.session.commit()
-    return redirect(url_for("trocas.list"))
+    return back_to_origin()

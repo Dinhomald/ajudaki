@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 
 from helpers import find_matches_for_need
-from models import Municipality, Need, Organization, Skill, User, db
+from models import Municipality, Need, Organization, Skill, TimeTransaction, User, db
 
 necessidades_bp = Blueprint("necessidades", __name__, url_prefix="/necessidades")
 
@@ -70,8 +70,68 @@ def nova():
 @necessidades_bp.route("/<int:need_id>")
 def detail(need_id):
     need = Need.query.get_or_404(need_id)
-    recomendacoes = find_matches_for_need(need) if need.status == "aberta" else []
-    return render_template("necessidade_detail.html", need=need, recomendacoes=recomendacoes)
+    ajuda_combinada = pending_transaction(need)
+    recomendacoes = (
+        find_matches_for_need(need) if need.status == "aberta" and not ajuda_combinada else []
+    )
+    recomendacoes = [r for r in recomendacoes if r["pessoa"].id != need.requester_user_id]
+    # Quem pediu não pode ser escolhido para ajudar a si mesmo.
+    outras_pessoas = (
+        User.query.filter(User.status == "ativo", User.id != (need.requester_user_id or 0))
+        .order_by(User.public_name)
+        .all()
+    )
+    return render_template(
+        "necessidade_detail.html",
+        need=need,
+        recomendacoes=recomendacoes,
+        ajuda_combinada=ajuda_combinada,
+        outras_pessoas=outras_pessoas,
+        erro=request.args.get("erro"),
+    )
+
+
+def pending_transaction(need):
+    return TimeTransaction.query.filter_by(need_id=need.id, status="pendente").first()
+
+
+@necessidades_bp.route("/<int:need_id>/assumir", methods=["POST"])
+def assumir(need_id):
+    """
+    Liga o pedido a quem vai ajudar: cria uma troca pendente com as horas
+    do pedido. O crédito só entra quando a troca for confirmada.
+    """
+    need = Need.query.get_or_404(need_id)
+    provider = User.query.get_or_404(request.form.get("provider_id", type=int))
+
+    erro = None
+    if need.status != "aberta":
+        erro = "Este pedido não está mais aberto."
+    elif not (need.requester_user_id or need.requester_organization_id):
+        erro = "Quem pediu ainda não tem cadastro. Cadastre a pessoa ou organização e vincule ao pedido."
+    elif provider.id == need.requester_user_id:
+        erro = "A pessoa não pode ajudar o próprio pedido."
+    elif provider.status != "ativo":
+        erro = "Essa pessoa está inativa."
+    elif pending_transaction(need):
+        erro = "Este pedido já tem alguém combinado para ajudar."
+
+    if erro:
+        return redirect(url_for("necessidades.detail", need_id=need.id, erro=erro))
+
+    db.session.add(
+        TimeTransaction(
+            provider_id=provider.id,
+            requester_user_id=need.requester_user_id,
+            requester_organization_id=None if need.requester_user_id else need.requester_organization_id,
+            need_id=need.id,
+            hours=need.hours,
+            description=need.title,
+            status="pendente",
+        )
+    )
+    db.session.commit()
+    return redirect(url_for("necessidades.detail", need_id=need.id))
 
 
 @necessidades_bp.route("/<int:need_id>/status", methods=["POST"])
