@@ -1,38 +1,50 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_ui.html" import hero, rotulo %}
 {% block title %}Cadastrar organização{% endblock %}
+
 {% block content %}
-<h1 class="page-title">Cadastrar organização</h1>
-<p class="page-intro">Associações, OSCs e projetos comunitários também podem participar da rede.</p>
+<a class="back" href="{{ url_for('organizacoes.list') }}">{{ icon('back', 20) }} Organizações</a>
+{% call hero('Cadastrar organização', icone='building', demo=False) %}Associações, OSCs e projetos comunitários <strong>também participam</strong>{% endcall %}
 
 <form class="form" method="post">
-    <label>
-        Nome
-        <input type="text" name="name" required>
-    </label>
+    <div class="form-card">
+        <h2 class="form-card-title"><span class="menu-icon avatar-c4">{{ icon('building', 18) }}</span> A organização</h2>
 
-    <label>
-        Município
-        <select name="municipality_id" required>
-            {% for m in municipios %}
-            <option value="{{ m.id }}">{{ m.name }}</option>
-            {% endfor %}
-        </select>
-    </label>
+        <label>
+            {{ rotulo('Nome') }}
+            <input type="text" name="name" required placeholder="Ex.: Associação Esperança">
+        </label>
 
-    <label>
-        Área de atuação
-        <input type="text" name="area_of_action" placeholder="Ex.: Educação">
-    </label>
+        <label>
+            {{ rotulo('Cidade') }}
+            <select name="municipality_id" required>
+                {% for m in municipios %}
+                <option value="{{ m.id }}">{{ m.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
 
-    <label>
-        Descrição
-        <textarea name="description" rows="3"></textarea>
-    </label>
+        <label>
+            {{ rotulo('Área de atuação', opcional=True) }}
+            <input type="text" name="area_of_action" placeholder="Ex.: Educação">
+        </label>
 
-    <label>
-        Habilidades geralmente necessárias (separadas por vírgula)
-        <input type="text" name="needed_skills" placeholder="Ex.: Informática, Design gráfico">
-    </label>
+        <label>
+            {{ rotulo('Descrição', opcional=True) }}
+            <textarea name="description" rows="3" placeholder="Ex.: Reforço escolar para crianças do bairro"></textarea>
+        </label>
+    </div>
+
+    <div class="form-card">
+        <h2 class="form-card-title"><span class="menu-icon avatar-c0">{{ icon('hand', 18) }}</span> Do que costuma precisar</h2>
+
+        <label>
+            {{ rotulo('Habilidades', opcional=True) }}
+            <input type="text" name="needed_skills" placeholder="Ex.: Informática, Design gráfico">
+        </label>
+        <p class="hint">Separe as habilidades por vírgula.</p>
+    </div>
 
     <div class="form-actions">
         <a class="btn" href="{{ url_for('organizacoes.list') }}">Cancelar</a>

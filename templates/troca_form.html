@@ -1,67 +1,79 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_ui.html" import hero, rotulo %}
 {% block title %}Registrar troca{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Registrar troca</h1>
-<p class="page-intro">Quem ajudou ganha as horas como crédito.</p>
+<a class="back" href="{{ url_for('trocas.list') }}">{{ icon('back', 20) }} Trocas</a>
+{% call hero('Registrar troca', icone='swap', demo=False) %}Quem ajudou ganha <strong>1 hora de crédito</strong> por hora{% endcall %}
 
 {% if erro %}
 <p class="error">{{ erro }}</p>
 {% endif %}
 
 <form class="form" method="post">
-    <label>
-        Quem ajudou
-        <select name="provider_id" required>
-            <option value="">Selecione</option>
-            {% for p in pessoas %}
-            <option value="{{ p.id }}">{{ p.public_name }}</option>
-            {% endfor %}
-        </select>
-    </label>
+    <div class="form-card">
+        <h2 class="form-card-title"><span class="menu-icon avatar-c0">{{ icon('users', 18) }}</span> Quem ajudou</h2>
 
-    <p class="form-group-title">Quem recebeu a ajuda</p>
-    <p class="hint">Escolha uma pessoa ou uma organização.</p>
+        <label>
+            {{ rotulo('Pessoa') }}
+            <select name="provider_id" required>
+                <option value="">Selecione</option>
+                {% for p in pessoas %}
+                <option value="{{ p.id }}" {{ 'selected' if form.get('provider_id') == p.id|string }}>{{ p.public_name|sem_ficticio }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
 
-    <label>
-        Pessoa
-        <select name="requester_user_id">
-            <option value="">—</option>
-            {% for p in pessoas %}
-            <option value="{{ p.id }}">{{ p.public_name }}</option>
-            {% endfor %}
-        </select>
-    </label>
+    <div class="form-card">
+        <h2 class="form-card-title"><span class="menu-icon avatar-c1">{{ icon('hand', 18) }}</span> Quem recebeu a ajuda</h2>
+        <p class="hint">Escolha uma pessoa ou uma organização.</p>
 
-    <label>
-        Organização
-        <select name="requester_organization_id">
-            <option value="">—</option>
-            {% for o in organizacoes %}
-            <option value="{{ o.id }}">{{ o.name }}</option>
-            {% endfor %}
-        </select>
-    </label>
+        <label>
+            {{ rotulo('Pessoa') }}
+            <select name="requester_user_id">
+                <option value="">—</option>
+                {% for p in pessoas %}
+                <option value="{{ p.id }}" {{ 'selected' if form.get('requester_user_id') == p.id|string }}>{{ p.public_name|sem_ficticio }}</option>
+                {% endfor %}
+            </select>
+        </label>
 
-    <label>
-        Pedido relacionado (opcional)
-        <select name="need_id">
-            <option value="">—</option>
-            {% for n in necessidades_abertas %}
-            <option value="{{ n.id }}">{{ n.title }}</option>
-            {% endfor %}
-        </select>
-    </label>
+        <label>
+            {{ rotulo('Organização') }}
+            <select name="requester_organization_id">
+                <option value="">—</option>
+                {% for o in organizacoes %}
+                <option value="{{ o.id }}" {{ 'selected' if form.get('requester_organization_id') == o.id|string }}>{{ o.name|sem_ficticio }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
 
-    <label>
-        Horas
-        <input type="number" name="hours" min="0.5" step="0.5" value="1" required>
-    </label>
+    <div class="form-card">
+        <h2 class="form-card-title"><span class="menu-icon avatar-c2">{{ icon('clock', 18) }}</span> A ajuda</h2>
 
-    <label>
-        Descrição
-        <textarea name="description" rows="2"></textarea>
-    </label>
+        <label>
+            {{ rotulo('Horas') }}
+            <input type="number" name="hours" min="0.5" step="0.5" value="{{ form.get('hours', 1) }}" required>
+        </label>
+
+        <label>
+            {{ rotulo('O que foi feito', opcional=True) }}
+            <textarea name="description" rows="2" placeholder="Ex.: Aula de costura básica">{{ form.get('description', '') }}</textarea>
+        </label>
+
+        <label>
+            {{ rotulo('Pedido relacionado', opcional=True) }}
+            <select name="need_id">
+                <option value="">—</option>
+                {% for n in necessidades_abertas %}
+                <option value="{{ n.id }}" {{ 'selected' if form.get('need_id') == n.id|string }}>{{ n.title|sem_ficticio }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
 
     <div class="form-actions">
         <a class="btn" href="{{ url_for('trocas.list') }}">Cancelar</a>

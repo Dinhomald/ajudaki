@@ -1,43 +1,45 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
-{% block title %}{{ pessoa.public_name }}{% endblock %}
+{% from "_ui.html" import avatar %}
+{% block title %}{{ pessoa.public_name|sem_ficticio }}{% endblock %}
 
 {% block content %}
 {% set b = status_badge('user', pessoa.status) %}
+{% set nome = pessoa.public_name|sem_ficticio %}
 <a class="back" href="{{ url_for('talentos.list') }}">{{ icon('back', 20) }} Pessoas</a>
 
-<div class="profile-header">
-    {% if pessoa.photo_filename %}
-    <img class="avatar avatar-lg" src="{{ url_for('static', filename='uploads/pessoas/' + pessoa.photo_filename) }}" alt="Foto de {{ pessoa.public_name }}">
-    {% else %}
-    <div class="avatar avatar-lg">{{ pessoa.public_name[0] }}</div>
-    {% endif %}
-
-    <div class="page-header">
-        <h1>{{ pessoa.public_name }}</h1>
-        <form method="post" action="{{ url_for('talentos.alternar_status', user_id=pessoa.id) }}">
-            <button class="badge badge-{{ b.tone }} badge-button" type="submit" title="Alternar entre ativo e inativo">
-                {{ b.label }} · alterar
-            </button>
-        </form>
-    </div>
+<div class="page-hero hero-profile">
+    {{ avatar(pessoa, 'lg') }}
+    <h1 class="page-title">{{ nome }}</h1>
     <div class="meta">
         <span>{{ icon('pin') }} {{ pessoa.municipality.name }}{% if pessoa.neighborhood %} · {{ pessoa.neighborhood }}{% endif %}</span>
         {% if pessoa.current_occupation %}<span>{{ icon('briefcase') }} {{ pessoa.current_occupation }}</span>{% endif %}
         {% if pessoa.availability %}<span>{{ icon('calendar') }} {{ pessoa.availability }}</span>{% endif %}
     </div>
+    <form method="post" action="{{ url_for('talentos.alternar_status', user_id=pessoa.id) }}">
+        <button class="badge badge-{{ b.tone }} badge-button" type="submit" title="Alternar entre ativo e inativo">
+            {{ b.label }} · alterar
+        </button>
+    </form>
+    {% if pessoa.public_name != nome %}<span class="demo-note">Dados de demonstração</span>{% endif %}
 </div>
 
 {% if pessoa.description %}
-<p>{{ pessoa.description }}</p>
+<p class="desc-card">{{ pessoa.description }}</p>
 {% endif %}
 
 <div class="section">
     <h2>Banco de horas</h2>
-    <div class="highlight">
-        <div class="stat-row">
-            <div class="stat"><span class="stat-value">{{ saldo }}h</span><span class="stat-label">saldo</span></div>
-            <div class="stat"><span class="stat-value">{{ horas_oferecidas }}h</span><span class="stat-label">ajudou · {{ horas_recebidas }}h recebidas</span></div>
+    <div class="tile-grid">
+        <div class="tile">
+            <span class="tile-icon avatar-c0">{{ icon('clock', 20) }}</span>
+            <span class="stat-value">{{ '%g'|format(saldo) }}h</span>
+            <span class="stat-label">de saldo para usar</span>
+        </div>
+        <div class="tile">
+            <span class="tile-icon avatar-c1">{{ icon('swap', 20) }}</span>
+            <span class="stat-value">{{ '%g'|format(horas_oferecidas) }}h</span>
+            <span class="stat-label">ajudou · {{ '%g'|format(horas_recebidas) }}h recebidas</span>
         </div>
     </div>
 </div>
@@ -47,7 +49,7 @@
     {% if pessoa.has_skills() %}
     <div class="tags">
         {% for skill in pessoa.has_skills() %}
-        <span class="tag">{{ skill.name }}</span>
+        <span class="tag tag-c{{ skill.name|avatar_tone }}">{{ skill.name }}</span>
         {% endfor %}
     </div>
     {% else %}
@@ -76,11 +78,11 @@
     {% if pessoa.active_offers() %}
     <div class="card-list">
         {% for oferta in pessoa.active_offers() %}
-        <div class="card">
-            <div class="card-title"><span>{{ oferta.title }}</span></div>
-            {% if oferta.hours_available %}<div class="meta"><span>{{ icon('clock') }} {{ oferta.hours_available }}h disponíveis</span></div>{% endif %}
-            {% if oferta.description %}<p>{{ oferta.description }}</p>{% endif %}
-            {% if oferta.skill %}<div class="tags"><span class="tag">{{ oferta.skill.name }}</span></div>{% endif %}
+        <div class="card card-accent card-accent-good">
+            <div class="card-title"><span>{{ oferta.title|sem_ficticio }}</span></div>
+            {% if oferta.hours_available %}<div class="meta"><span>{{ icon('clock') }} {{ '%g'|format(oferta.hours_available) }}h disponíveis</span></div>{% endif %}
+            {% if oferta.description %}<p>{{ oferta.description|sem_ficticio }}</p>{% endif %}
+            {% if oferta.skill %}<div class="tags"><span class="tag tag-c{{ oferta.skill.name|avatar_tone }}">{{ oferta.skill.name }}</span></div>{% endif %}
         </div>
         {% endfor %}
     </div>

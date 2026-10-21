@@ -1,24 +1,36 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
-{% block title %}{{ organizacao.name }}{% endblock %}
+{% block title %}{{ organizacao.name|sem_ficticio }}{% endblock %}
 
 {% block content %}
 {% set b = status_badge('org', organizacao.status) %}
+{% set nome = organizacao.name|sem_ficticio %}
 <a class="back" href="{{ url_for('organizacoes.list') }}">{{ icon('back', 20) }} Organizações</a>
 
-<span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
-<h1 class="page-title">{{ organizacao.name }}</h1>
-<div class="meta">
-    <span>{{ icon('pin') }} {{ organizacao.municipality.name }}</span>
-    {% if organizacao.area_of_action %}<span>{{ organizacao.area_of_action }}</span>{% endif %}
+<div class="page-hero hero-profile">
+    <span class="avatar avatar-lg avatar-org avatar-c{{ nome|avatar_tone }}" aria-hidden="true">{{ icon('building', 36) }}</span>
+    <h1 class="page-title">{{ nome }}</h1>
+    <div class="meta">
+        <span>{{ icon('pin') }} {{ organizacao.municipality.name }}</span>
+        {% if organizacao.area_of_action %}<span>{{ organizacao.area_of_action }}</span>{% endif %}
+    </div>
+    <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
+    {% if organizacao.name != nome %}<span class="demo-note">Dados de demonstração</span>{% endif %}
 </div>
-{% if organizacao.description %}<p>{{ organizacao.description }}</p>{% endif %}
+
+{% if organizacao.description %}<p class="desc-card">{{ organizacao.description }}</p>{% endif %}
 
 <div class="section">
-    <div class="highlight">
-        <div class="stat-row">
-            <div class="stat"><span class="stat-value">{{ horas_recebidas }}h</span><span class="stat-label">de voluntariado recebidas</span></div>
-            <div class="stat"><span class="stat-value">{{ necessidades_abertas|length }}</span><span class="stat-label">pedidos abertos</span></div>
+    <div class="tile-grid">
+        <div class="tile">
+            <span class="tile-icon avatar-c0">{{ icon('clock', 20) }}</span>
+            <span class="stat-value">{{ '%g'|format(horas_recebidas) }}h</span>
+            <span class="stat-label">de voluntariado recebidas</span>
+        </div>
+        <div class="tile">
+            <span class="tile-icon avatar-c3">{{ icon('hand', 20) }}</span>
+            <span class="stat-value">{{ necessidades_abertas|length }}</span>
+            <span class="stat-label">pedidos abertos</span>
         </div>
     </div>
 </div>
@@ -28,7 +40,7 @@
     {% if organizacao.needed_skills %}
     <div class="tags">
         {% for link in organizacao.needed_skills %}
-        <span class="tag">{{ link.skill.name }}</span>
+        <span class="tag tag-c{{ link.skill.name|avatar_tone }}">{{ link.skill.name }}</span>
         {% endfor %}
     </div>
     {% else %}
@@ -41,11 +53,11 @@
     {% if necessidades_abertas %}
     <div class="card-list">
         {% for n in necessidades_abertas %}
-        <a class="card" href="{{ url_for('necessidades.detail', need_id=n.id) }}">
-            <div class="card-title"><span>{{ n.title }}</span></div>
+        <a class="card card-accent card-accent-good" href="{{ url_for('necessidades.detail', need_id=n.id) }}">
+            <div class="card-title"><span>{{ n.title|sem_ficticio }}</span>{{ icon('chevron', 18) }}</div>
             <div class="meta">
-                <span>{{ icon('clock') }} {{ n.hours }}h</span>
-                {% if n.skill %}<span>{{ n.skill.name }}</span>{% endif %}
+                <span>{{ icon('clock') }} {{ '%g'|format(n.hours) }}h</span>
+                {% if n.skill %}<span class="tag tag-c{{ n.skill.name|avatar_tone }}">{{ n.skill.name }}</span>{% endif %}
             </div>
         </a>
         {% endfor %}

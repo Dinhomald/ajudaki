@@ -1,64 +1,92 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_ui.html" import hero, rotulo %}
 {% block title %}Cadastrar pessoa{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Cadastrar pessoa</h1>
-<p class="page-intro">Só o nome e a cidade são obrigatórios.</p>
+<a class="back" href="{{ url_for('talentos.list') }}">{{ icon('back', 20) }} Pessoas</a>
+{% call hero('Cadastrar pessoa', icone='user-plus', demo=False) %}Só o <strong>nome</strong> e a <strong>cidade</strong> são obrigatórios{% endcall %}
 
 <form class="form" method="post" enctype="multipart/form-data">
-    <label>
-        Foto (opcional)
-        <input type="file" name="photo" accept=".png,.jpg,.jpeg,.webp">
-    </label>
+    <div class="form-card">
+        <h2 class="form-card-title"><span class="menu-icon avatar-c1">{{ icon('users', 18) }}</span> Quem é você</h2>
 
-    <label>
-        Nome
-        <input type="text" name="public_name" required placeholder="Como você quer ser chamado(a)">
-    </label>
+        <label class="photo-picker">
+            <span class="avatar avatar-lg photo-preview" id="photo-preview">{{ icon('user-plus', 30) }}</span>
+            <span class="photo-picker-text">
+                <span class="btn btn-sm">Escolher foto</span>
+                <span class="opt">opcional</span>
+            </span>
+            <input class="visually-hidden" type="file" name="photo" accept=".png,.jpg,.jpeg,.webp" onchange="mostrarFoto(this)">
+        </label>
 
-    <label>
-        Cidade
-        <select name="municipality_id" required>
-            {% for m in municipios %}
-            <option value="{{ m.id }}">{{ m.name }}</option>
-            {% endfor %}
-        </select>
-    </label>
+        <label>
+            {{ rotulo('Nome') }}
+            <input type="text" name="public_name" required placeholder="Como você quer ser chamado(a)">
+        </label>
 
-    <label>
-        Bairro (opcional)
-        <input type="text" name="neighborhood">
-    </label>
+        <label>
+            {{ rotulo('Cidade') }}
+            <select name="municipality_id" required>
+                {% for m in municipios %}
+                <option value="{{ m.id }}">{{ m.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
 
-    <label>
-        Fale um pouco sobre você (opcional)
-        <textarea name="description" rows="3"></textarea>
-    </label>
+        <label>
+            {{ rotulo('Bairro', opcional=True) }}
+            <input type="text" name="neighborhood" placeholder="Ex.: Centro">
+        </label>
+    </div>
 
-    <label>
-        Com o que você trabalha hoje (opcional)
-        <input type="text" name="current_occupation" placeholder="Ex.: Autônomo, técnico de informática">
-    </label>
+    <div class="form-card">
+        <h2 class="form-card-title"><span class="menu-icon avatar-c2">{{ icon('briefcase', 18) }}</span> Sobre você</h2>
 
-    <label>
-        Quando você tem tempo livre (opcional)
-        <input type="text" name="availability" placeholder="Ex.: sábados à tarde">
-    </label>
+        <label>
+            {{ rotulo('Fale um pouco sobre você', opcional=True) }}
+            <textarea name="description" rows="3" placeholder="Ex.: Gosto de ensinar e tenho paciência com iniciantes"></textarea>
+        </label>
 
-    <label>
-        O que você sabe fazer
-        <input type="text" name="skills_has" placeholder="Ex.: Excel, Informática">
-    </label>
+        <label>
+            {{ rotulo('Com o que você trabalha hoje', opcional=True) }}
+            <input type="text" name="current_occupation" placeholder="Ex.: Autônomo, técnico de informática">
+        </label>
 
-    <label>
-        O que você quer aprender (opcional)
-        <input type="text" name="skills_wants" placeholder="Ex.: Inglês">
-    </label>
-    <p class="hint">Separe as habilidades por vírgula.</p>
+        <label>
+            {{ rotulo('Quando você tem tempo livre', opcional=True) }}
+            <input type="text" name="availability" placeholder="Ex.: sábados à tarde">
+        </label>
+    </div>
+
+    <div class="form-card">
+        <h2 class="form-card-title"><span class="menu-icon avatar-c0">{{ icon('hand', 18) }}</span> Habilidades</h2>
+
+        <label>
+            {{ rotulo('O que você sabe fazer') }}
+            <input type="text" name="skills_has" placeholder="Ex.: Excel, Informática">
+        </label>
+
+        <label>
+            {{ rotulo('O que você quer aprender', opcional=True) }}
+            <input type="text" name="skills_wants" placeholder="Ex.: Inglês">
+        </label>
+        <p class="hint">Separe as habilidades por vírgula.</p>
+    </div>
 
     <div class="form-actions">
         <a class="btn" href="{{ url_for('talentos.list') }}">Cancelar</a>
         <button class="btn btn-primary" type="submit">Salvar</button>
     </div>
 </form>
+
+<script>
+    function mostrarFoto(input) {
+        var arquivo = input.files && input.files[0];
+        if (!arquivo) return;
+        var preview = document.getElementById("photo-preview");
+        preview.style.backgroundImage = "url(" + URL.createObjectURL(arquivo) + ")";
+        preview.innerHTML = "";
+    }
+</script>
 {% endblock %}

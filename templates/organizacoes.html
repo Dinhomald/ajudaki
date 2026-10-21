@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
+{% from "_ui.html" import hero %}
 {% block title %}Organizações{% endblock %}
 
 {% block content %}
 <a class="back" href="{{ url_for('dashboard.mais') }}">{{ icon('back', 20) }} Mais</a>
-<div class="page-header">
-    <h1>Organizações</h1>
-    <a class="btn btn-sm" href="{{ url_for('organizacoes.nova') }}">{{ icon('plus', 16) }} Cadastrar</a>
-</div>
-<p class="page-intro">Associações, OSCs e projetos comunitários da rede.</p>
+{% call hero('Organizações', acao_url=url_for('organizacoes.nova'), acao_texto='Cadastrar') %}<strong>{{ organizacoes|length }}</strong> {{ 'organização' if organizacoes|length == 1 else 'associações, OSCs e projetos' }} na rede{% endcall %}
 
-<form class="filters" method="get">
-    <input type="text" name="area" placeholder="Buscar por área de atuação" value="{{ filtro_area or '' }}">
+<form class="filters filters-compact" method="get">
+    <label class="search-field">
+        {{ icon('search', 18) }}
+        <input type="search" name="area" placeholder="Buscar área de atuação" value="{{ filtro_area or '' }}" aria-label="Buscar área de atuação">
+    </label>
 
-    <select name="municipio" onchange="this.form.submit()">
+    <select name="municipio" onchange="this.form.submit()" aria-label="Cidade">
         <option value="">Todas as cidades</option>
         {% for m in municipios %}
         <option value="{{ m.id }}" {{ 'selected' if filtro_municipio == m.id else '' }}>{{ m.name }}</option>
@@ -24,22 +24,31 @@
 {% if organizacoes %}
 <div class="card-list">
     {% for o in organizacoes %}
-    <a class="card" href="{{ url_for('organizacoes.perfil', organization_id=o.id) }}">
-        <div class="card-title">
-            <span>{{ o.name }}</span>
-            {% if o.status != 'ativa' %}
-            {% set b = status_badge('org', o.status) %}
-            <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
+    {% set nome = o.name|sem_ficticio %}
+    <a class="card person-card" href="{{ url_for('organizacoes.perfil', organization_id=o.id) }}">
+        <span class="avatar avatar-md avatar-org avatar-c{{ nome|avatar_tone }}" aria-hidden="true">{{ icon('building', 24) }}</span>
+        <div class="person-info">
+            <div class="person-head">
+                <strong>{{ nome }}</strong>
+                {% if o.status != 'ativa' %}
+                {% set b = status_badge('org', o.status) %}
+                <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
+                {% endif %}
+            </div>
+            <div class="meta">
+                <span>{{ icon('pin') }} {{ o.municipality.name }}</span>
+                {% if o.area_of_action %}<span>{{ o.area_of_action }}</span>{% endif %}
+            </div>
+            {% if o.needed_skills %}
+            <div class="tags">
+                {% for link in o.needed_skills[:2] %}
+                <span class="tag tag-c{{ link.skill.name|avatar_tone }}">{{ link.skill.name }}</span>
+                {% endfor %}
+                {% if o.needed_skills|length > 2 %}
+                <span class="tag tag-muted">+{{ o.needed_skills|length - 2 }}</span>
+                {% endif %}
+            </div>
             {% endif %}
-        </div>
-        <div class="meta">
-            <span>{{ icon('pin') }} {{ o.municipality.name }}</span>
-            {% if o.area_of_action %}<span>{{ o.area_of_action }}</span>{% endif %}
-        </div>
-        <div class="tags">
-            {% for skill_link in o.needed_skills %}
-            <span class="tag tag-muted">{{ skill_link.skill.name }}</span>
-            {% endfor %}
         </div>
     </a>
     {% endfor %}

@@ -1,0 +1,45 @@
+{% from "_icons.html" import icon %}
+
+{#
+  Cabeçalho colorido padrão das telas.
+  O conteúdo do {% call %} vira a linha de destaque (pode conter <strong>).
+#}
+{% macro hero(titulo, icone=None, acao_url=None, acao_texto=None, demo=True) -%}
+<div class="page-hero">
+    <div class="hero-top">
+        {% if icone %}<span class="hero-icon">{{ icon(icone, 24) }}</span>{% endif %}
+        <h1 class="page-title">{{ titulo }}</h1>
+        {% if acao_url %}<a class="hero-action" href="{{ acao_url }}">{{ icon('plus', 16) }} {{ acao_texto }}</a>{% endif %}
+    </div>
+    {% if caller is defined %}<p class="hero-stat">{{ caller() }}</p>{% endif %}
+    {% if demo %}<span class="demo-note">Dados de demonstração</span>{% endif %}
+</div>
+{%- endmacro %}
+
+{# Título de campo de formulário, com marcação discreta de "opcional". #}
+{% macro rotulo(texto, opcional=False) -%}
+<span class="label-text">{{ texto }}{% if opcional %} <span class="opt">opcional</span>{% endif %}</span>
+{%- endmacro %}
+
+{# Lista de barras horizontais: uma cor por lista, rótulo e valor na cor do texto. #}
+{% macro barras(itens, cor, sufixo='') -%}
+{% set maior = itens|map(attribute=1)|max %}
+<ul class="bar-list">
+    {% for nome, total in itens %}
+    <li title="{{ nome }}: {{ '%g'|format(total) }}{{ sufixo }}">
+        <div class="bar-label"><span>{{ nome }}</span><span class="ranked-value">{{ '%g'|format(total) }}{{ sufixo }}</span></div>
+        <div class="bar-track"><div class="bar-fill bar-{{ cor }}" style="width: {{ (total / maior * 100)|round if maior else 0 }}%"></div></div>
+    </li>
+    {% endfor %}
+</ul>
+{%- endmacro %}
+
+{# Avatar de pessoa: foto quando houver, senão a inicial numa cor estável. #}
+{% macro avatar(pessoa, tamanho='md') -%}
+{% set nome = pessoa.public_name|sem_ficticio %}
+{% if pessoa.photo_filename %}
+<img class="avatar avatar-{{ tamanho }}" src="{{ url_for('static', filename='uploads/pessoas/' + pessoa.photo_filename) }}" alt="">
+{% else %}
+<span class="avatar avatar-{{ tamanho }} avatar-c{{ nome|avatar_tone }}" aria-hidden="true">{{ nome[0] }}</span>
+{% endif %}
+{%- endmacro %}

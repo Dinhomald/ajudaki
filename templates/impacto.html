@@ -1,36 +1,44 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
+{% from "_ui.html" import hero, barras %}
 {% block title %}Impacto{% endblock %}
 
 {% block content %}
 <a class="back" href="{{ url_for('dashboard.mais') }}">{{ icon('back', 20) }} Mais</a>
-<h1 class="page-title">Impacto</h1>
-<p class="page-intro">O que a rede já fez junta.</p>
+{% call hero('Impacto', icone='chart') %}<strong>{{ '%g'|format(resumo.horas_trocadas) }}h</strong> trocadas em <strong>{{ resumo.conexoes_realizadas }}</strong> conexões{% endcall %}
 
-<div class="highlight">
-    <div class="stat-row">
-        <div class="stat"><span class="stat-value">{{ resumo.horas_trocadas }}h</span><span class="stat-label">horas trocadas</span></div>
-        <div class="stat"><span class="stat-value">{{ resumo.conexoes_realizadas }}</span><span class="stat-label">conexões feitas</span></div>
+<div class="tile-grid">
+    <div class="tile">
+        <span class="tile-icon avatar-c1">{{ icon('users', 20) }}</span>
+        <span class="stat-value">{{ resumo.pessoas_conectadas }}</span>
+        <span class="stat-label">pessoas conectadas</span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon avatar-c4">{{ icon('building', 20) }}</span>
+        <span class="stat-value">{{ resumo.organizacoes }}</span>
+        <span class="stat-label">organizações</span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon avatar-c2">{{ icon('clock', 20) }}</span>
+        <span class="stat-value">{{ '%g'|format(resumo.horas_oferecidas) }}h</span>
+        <span class="stat-label">horas oferecidas</span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon avatar-c0">{{ icon('hand', 20) }}</span>
+        <span class="stat-value">{{ resumo.necessidades_atendidas }}</span>
+        <span class="stat-label">pedidos atendidos</span>
     </div>
 </div>
 
 <div class="section">
-    <div class="stat-row">
-        <div class="stat"><span class="stat-value">{{ resumo.pessoas_conectadas }}</span><span class="stat-label">pessoas conectadas</span></div>
-        <div class="stat"><span class="stat-value">{{ resumo.organizacoes }}</span><span class="stat-label">organizações</span></div>
-        <div class="stat"><span class="stat-value">{{ resumo.horas_oferecidas }}h</span><span class="stat-label">horas oferecidas</span></div>
-        <div class="stat"><span class="stat-value">{{ resumo.necessidades_atendidas }}</span><span class="stat-label">pedidos atendidos</span></div>
-    </div>
-</div>
-
-<div class="section">
-    <h2>Trocas por mês</h2>
+    <h2>Horas trocadas por mês</h2>
     {% if resumo.evolucao_trocas %}
-    <ul class="ranked-list">
-        {% for mes, total, horas in resumo.evolucao_trocas %}
-        <li><span>{{ mes }}</span><span class="ranked-value">{{ total }} trocas · {{ horas }}h</span></li>
-        {% endfor %}
-    </ul>
+    {% set meses = {'01': 'jan', '02': 'fev', '03': 'mar', '04': 'abr', '05': 'mai', '06': 'jun', '07': 'jul', '08': 'ago', '09': 'set', '10': 'out', '11': 'nov', '12': 'dez'} %}
+    {% set itens = [] %}
+    {% for mes, total, horas in resumo.evolucao_trocas %}
+    {% set _ = itens.append((meses[mes[5:]] ~ '/' ~ mes[:4] ~ ' · ' ~ total ~ (' troca' if total == 1 else ' trocas'), horas)) %}
+    {% endfor %}
+    {{ barras(itens, 'oferecem', 'h') }}
     {% else %}
     <p class="empty">Ainda não há trocas concluídas.</p>
     {% endif %}

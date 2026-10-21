@@ -1,15 +1,7 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
+{% from "_ui.html" import avatar %}
 {% block title %}Trocas{% endblock %}
-
-{% macro avatar_pessoa(pessoa) -%}
-{% set nome = pessoa.public_name|sem_ficticio %}
-{% if pessoa.photo_filename %}
-<img class="avatar avatar-md" src="{{ url_for('static', filename='uploads/pessoas/' + pessoa.photo_filename) }}" alt="">
-{% else %}
-<span class="avatar avatar-md avatar-c{{ nome|avatar_tone }}" aria-hidden="true">{{ nome[0] }}</span>
-{% endif %}
-{%- endmacro %}
 
 {% block content %}
 <div class="page-hero">
@@ -35,10 +27,10 @@
     {% set o_que = t.description or (t.need.title if t.need else '') %}
     <div class="card card-accent card-accent-{{ b.tone }}">
         <div class="swap-people">
-            {{ avatar_pessoa(t.provider) }}
+            {{ avatar(t.provider) }}
             <div class="swap-arrow"><span>{{ icon('clock', 14) }} {{ horas }}h</span></div>
             {% if t.requester_user %}
-            {{ avatar_pessoa(t.requester_user) }}
+            {{ avatar(t.requester_user) }}
             {% else %}
             <span class="avatar avatar-md avatar-org avatar-c{{ para|avatar_tone }}" aria-hidden="true">{{ icon('building', 24) }}</span>
             {% endif %}

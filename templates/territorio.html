@@ -1,21 +1,29 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
+{% from "_ui.html" import hero %}
 {% block title %}Cidades{% endblock %}
 
 {% block content %}
 <a class="back" href="{{ url_for('dashboard.mais') }}">{{ icon('back', 20) }} Mais</a>
-<h1 class="page-title">Cidades</h1>
-<p class="page-intro">Como a rede está em cada município.</p>
+{% call hero('Cidades', icone='map') %}<strong>{{ indicadores|length }}</strong> {{ 'município' if indicadores|length == 1 else 'municípios' }} com a rede ativa{% endcall %}
 
 <div class="card-list">
     {% for i in indicadores %}
-    <a class="card" href="{{ url_for('territorio.detail', municipality_id=i.municipio.id) }}">
-        <div class="card-title"><span>{{ i.municipio.name }}</span>{{ icon('chevron', 18) }}</div>
-        <div class="meta">
-            <span>{{ icon('users') }} {{ i.pessoas_cadastradas }} pessoas</span>
-            <span>{{ icon('building') }} {{ i.organizacoes }} org.</span>
-            <span>{{ icon('hand') }} {{ i.necessidades_abertas }} pedidos</span>
-            <span>{{ icon('swap') }} {{ i.horas_trocadas }}h trocadas</span>
+    {% set pct = i.ativacao.percentual %}
+    <a class="card person-card" href="{{ url_for('territorio.detail', municipality_id=i.municipio.id) }}">
+        <span class="avatar avatar-md avatar-org avatar-c{{ i.municipio.name|avatar_tone }}" aria-hidden="true">{{ icon('map', 24) }}</span>
+        <div class="person-info">
+            <div class="person-head"><strong>{{ i.municipio.name }}</strong>{{ icon('chevron', 18) }}</div>
+            <div class="meta">
+                <span>{{ icon('users') }} {{ i.pessoas_cadastradas }}</span>
+                <span>{{ icon('building') }} {{ i.organizacoes }}</span>
+                <span>{{ icon('hand') }} {{ i.necessidades_abertas }} {{ 'pedido' if i.necessidades_abertas == 1 else 'pedidos' }}</span>
+                <span>{{ icon('swap') }} {{ '%g'|format(i.horas_trocadas) }}h</span>
+            </div>
+            <div class="city-progress" title="Índice de Ativação Comunitária: {{ '%g'|format(pct) }}%">
+                <div class="bar-label"><span>Rede ativa</span><span>{{ '%g'|format(pct) }}%</span></div>
+                <div class="bar-track"><div class="bar-fill bar-oferecem" style="width: {{ pct }}%"></div></div>
+            </div>
         </div>
     </a>
     {% endfor %}

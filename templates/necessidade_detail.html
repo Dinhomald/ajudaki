@@ -1,23 +1,29 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
-{% block title %}{{ need.title }}{% endblock %}
+{% from "_ui.html" import avatar %}
+{% block title %}{{ need.title|sem_ficticio }}{% endblock %}
 
 {% block content %}
 {% set b = status_badge('need', need.status) %}
 <a class="back" href="{{ url_for('necessidades.list') }}">{{ icon('back', 20) }} Pedidos</a>
 
-<span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
-<h1 class="page-title">{{ need.title }}</h1>
-
-<div class="meta">
-    <span>{{ need.requester_display_name }}</span>
-    <span>{{ icon('pin') }} {{ need.municipality.name }}{% if need.location %} · {{ need.location }}{% endif %}</span>
-    <span>{{ icon('clock') }} {{ need.hours }}h</span>
+<div class="page-hero">
+    <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
+    <h1 class="page-title" style="margin-top: 8px">{{ need.title|sem_ficticio }}</h1>
+    <div class="meta">
+        <span>{{ icon('users') }} {{ need.requester_display_name|sem_ficticio }}</span>
+        <span>{{ icon('pin') }} {{ need.municipality.name }}{% if need.location %} · {{ need.location|sem_ficticio }}{% endif %}</span>
+        <span>{{ icon('clock') }} {{ '%g'|format(need.hours) }}h</span>
+    </div>
+    <span class="demo-note">Dados de demonstração</span>
 </div>
 
-{% if need.description %}<p>{{ need.description }}</p>{% endif %}
-
-{% if need.skill %}<div class="tags"><span class="tag">{{ need.skill.name }}</span></div>{% endif %}
+{% if need.description or need.skill %}
+<div class="desc-card">
+    {% if need.description %}<p style="margin: 0">{{ need.description }}</p>{% endif %}
+    {% if need.skill %}<div class="tags"><span class="tag tag-c{{ need.skill.name|avatar_tone }}">{{ need.skill.name }}</span></div>{% endif %}
+</div>
+{% endif %}
 
 <form class="status-actions" method="post" action="{{ url_for('necessidades.alterar_status', need_id=need.id) }}">
     <span>Situação</span>
@@ -29,20 +35,25 @@
 </form>
 
 <div class="section">
-    <h2>Quem pode ajudar</h2>
-    {% if not need.skill %}
+    <h2>Quem pode ajudar {% if recomendacoes %}<span class="count-pill">{{ recomendacoes|length }}</span>{% endif %}</h2>
+    {% if need.status != 'aberta' %}
+    <p class="empty">Sugestões aparecem só para pedidos abertos.</p>
+    {% elif not need.skill %}
     <p class="empty">Escolha uma habilidade no pedido para ver sugestões.</p>
     {% elif recomendacoes %}
     <div class="card-list">
         {% for r in recomendacoes %}
-        <a class="card" href="{{ url_for('talentos.perfil', user_id=r.pessoa.id) }}">
-            <div class="card-title"><span>{{ r.pessoa.public_name }}</span></div>
-            <div class="meta"><span>{{ icon('pin') }} {{ r.pessoa.municipality.name }}</span></div>
-            <ul class="reasons">
-                {% for motivo in r.motivos %}
-                <li>{{ motivo }}</li>
-                {% endfor %}
-            </ul>
+        <a class="card person-card" href="{{ url_for('talentos.perfil', user_id=r.pessoa.id) }}">
+            {{ avatar(r.pessoa) }}
+            <div class="person-info">
+                <div class="person-head"><strong>{{ r.pessoa.public_name|sem_ficticio }}</strong>{{ icon('chevron', 18) }}</div>
+                <div class="meta"><span>{{ icon('pin') }} {{ r.pessoa.municipality.name }}</span></div>
+                <ul class="reasons">
+                    {% for motivo in r.motivos %}
+                    <li>{{ motivo }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
         </a>
         {% endfor %}
     </div>

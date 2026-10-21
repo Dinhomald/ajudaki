@@ -388,6 +388,89 @@ a {
     color: #fff;
 }
 
+.hero-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+
+.hero-top .page-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.hero-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.hero-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--brand-dark);
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.page-hero .meta,
+.page-hero .meta span {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.page-hero .badge {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+/* perfil: avatar centralizado dentro do cabeçalho */
+.hero-profile {
+    text-align: center;
+    padding-top: 22px;
+}
+
+.hero-profile .avatar {
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6);
+    margin-bottom: 8px;
+}
+
+.hero-profile .page-title {
+    margin-bottom: 4px;
+}
+
+.hero-profile .meta {
+    justify-content: center;
+    margin: 4px 0 10px;
+}
+
+.hero-profile form {
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.back + .page-hero {
+    margin-top: 0;
+}
+
+.page-hero > * {
+    position: relative;
+    z-index: 1;
+}
+
 .hero-stat {
     margin: 2px 0 10px;
     font-size: 0.95rem;
@@ -920,6 +1003,148 @@ a.card:active {
 
 .form-actions-left {
     margin-top: 10px;
+}
+
+/* formulário dividido em cartões temáticos */
+.form-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.form-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.form-card-title .menu-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+}
+
+.form-card .form-group-title {
+    margin: 2px 0 -8px;
+}
+
+.form-card .form-group-title + .hint {
+    margin-top: 4px;
+}
+
+.form .form-card input,
+.form .form-card select,
+.form .form-card textarea {
+    background: var(--bg);
+    border-color: transparent;
+}
+
+.label-text {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.opt {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--muted-bg);
+    padding: 1px 8px;
+    border-radius: 999px;
+}
+
+/* seletor de foto com prévia */
+.form .photo-picker {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+}
+
+.photo-preview {
+    background-size: cover;
+    background-position: center;
+    color: var(--text-muted);
+    background-color: var(--muted-bg);
+}
+
+.photo-picker-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.form .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.form .photo-picker:focus-within .btn {
+    outline: 2px solid var(--brand);
+}
+
+.form-actions {
+    position: sticky;
+    bottom: calc(var(--tabbar-h) + 10px + env(safe-area-inset-bottom));
+    z-index: 5;
+    padding: 10px;
+    margin: 4px -10px 0;
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* card de recomendação: motivos como lista de verificação */
+.reasons {
+    list-style: none;
+    padding: 0;
+}
+
+.reasons li {
+    position: relative;
+    padding-left: 20px;
+}
+
+.reasons li::before {
+    content: "✓";
+    position: absolute;
+    left: 2px;
+    color: var(--good);
+    font-weight: 800;
+}
+
+.desc-card {
+    margin: 0 0 4px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+/* lista de cidades */
+.city-progress {
+    margin-top: 10px;
+}
+
+.city-progress .bar-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
 }
 
 /* ---------- SEÇÕES ---------- */

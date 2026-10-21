@@ -1,23 +1,24 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
+{% from "_ui.html" import hero %}
 {% block title %}Mais{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Mais</h1>
+{% call hero('Mais', icone='menu', demo=False) %}Organizações, cidades e o <strong>impacto</strong> da rede{% endcall %}
 
 <div class="menu-list">
     <a href="{{ url_for('organizacoes.list') }}">
-        <span class="menu-icon">{{ icon('building', 22) }}</span>
+        <span class="menu-icon avatar-c4">{{ icon('building', 22) }}</span>
         <span class="menu-text"><strong>Organizações</strong><small>Associações e projetos da rede</small></span>
         {{ icon('chevron', 18) }}
     </a>
     <a href="{{ url_for('territorio.list') }}">
-        <span class="menu-icon">{{ icon('map', 22) }}</span>
+        <span class="menu-icon avatar-c5">{{ icon('map', 22) }}</span>
         <span class="menu-text"><strong>Cidades</strong><small>Como está cada município</small></span>
         {{ icon('chevron', 18) }}
     </a>
     <a href="{{ url_for('impacto.index') }}">
-        <span class="menu-icon">{{ icon('chart', 22) }}</span>
+        <span class="menu-icon avatar-c2">{{ icon('chart', 22) }}</span>
         <span class="menu-text"><strong>Impacto</strong><small>O que a rede já fez junta</small></span>
         {{ icon('chevron', 18) }}
     </a>

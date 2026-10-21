@@ -1,34 +1,42 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_ui.html" import hero, rotulo %}
 {% block title %}Nova oferta{% endblock %}
+
 {% block content %}
-<h1 class="page-title">Nova oferta de {{ pessoa.public_name }}</h1>
-<p class="page-intro">Diga o que você pode oferecer para a comunidade.</p>
+{% set nome = pessoa.public_name|sem_ficticio %}
+<a class="back" href="{{ url_for('talentos.perfil', user_id=pessoa.id) }}">{{ icon('back', 20) }} {{ nome }}</a>
+{% call hero('Nova oferta', icone='plus', demo=False) %}O que <strong>{{ nome }}</strong> pode oferecer para a comunidade{% endcall %}
 
 <form class="form" method="post">
-    <label>
-        Título
-        <input type="text" name="title" required placeholder="Ex.: Aulas de Excel">
-    </label>
+    <div class="form-card">
+        <h2 class="form-card-title"><span class="menu-icon avatar-c0">{{ icon('hand', 18) }}</span> A oferta</h2>
 
-    <label>
-        Descrição
-        <textarea name="description" rows="3"></textarea>
-    </label>
+        <label>
+            {{ rotulo('Título') }}
+            <input type="text" name="title" required placeholder="Ex.: Aulas de Excel">
+        </label>
 
-    <label>
-        Habilidade relacionada
-        <select name="skill_id">
-            <option value="">Não especificada</option>
-            {% for s in skills %}
-            <option value="{{ s.id }}">{{ s.name }}</option>
-            {% endfor %}
-        </select>
-    </label>
+        <label>
+            {{ rotulo('Descrição', opcional=True) }}
+            <textarea name="description" rows="3" placeholder="Ex.: Do básico até tabelas dinâmicas"></textarea>
+        </label>
 
-    <label>
-        Horas disponíveis (opcional)
-        <input type="number" name="hours_available" min="0.5" step="0.5">
-    </label>
+        <label>
+            {{ rotulo('Habilidade relacionada', opcional=True) }}
+            <select name="skill_id">
+                <option value="">Não especificada</option>
+                {% for s in skills %}
+                <option value="{{ s.id }}">{{ s.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            {{ rotulo('Horas disponíveis', opcional=True) }}
+            <input type="number" name="hours_available" min="0.5" step="0.5" placeholder="Ex.: 4">
+        </label>
+    </div>
 
     <div class="form-actions">
         <a class="btn" href="{{ url_for('talentos.perfil', user_id=pessoa.id) }}">Cancelar</a>

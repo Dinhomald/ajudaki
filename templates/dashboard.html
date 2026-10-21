@@ -1,18 +1,7 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
+{% from "_ui.html" import barras %}
 {% block title %}Início{% endblock %}
-
-{% macro barras(itens, cor) -%}
-{% set maior = itens|map(attribute=1)|max %}
-<ul class="bar-list">
-    {% for nome, total in itens %}
-    <li title="{{ nome }}: {{ total }}">
-        <div class="bar-label"><span>{{ nome }}</span><span class="ranked-value">{{ total }}</span></div>
-        <div class="bar-track"><div class="bar-fill bar-{{ cor }}" style="width: {{ (total / maior * 100)|round }}%"></div></div>
-    </li>
-    {% endfor %}
-</ul>
-{%- endmacro %}
 
 {% block content %}
 <div class="page-hero">
