@@ -1,4 +1,6 @@
 import os
+import re
+import zlib
 
 from flask import Flask
 
@@ -16,6 +18,19 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_PATH = os.path.join(BASE_DIR, "ajudaki.db")
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads", "pessoas")
 
+FICTICIO_RE = re.compile(r"\s*\((?:dado )?fictíci[oa]\)", re.IGNORECASE)
+AVATAR_TONES = 6
+
+
+def sem_ficticio(texto):
+    """Remove o sufixo "(dado fictício)" da exibição; a tela mostra um aviso único no lugar."""
+    return FICTICIO_RE.sub("", texto or "")
+
+
+def avatar_tone(nome):
+    """Cor estável do avatar a partir do nome (mesma pessoa, mesma cor)."""
+    return zlib.crc32((nome or "").encode("utf-8")) % AVATAR_TONES
+
 
 def create_app():
     app = Flask(__name__)
@@ -25,6 +40,8 @@ def create_app():
     app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB
     db.init_app(app)
     app.jinja_env.globals["status_badge"] = status_badge
+    app.jinja_env.filters["sem_ficticio"] = sem_ficticio
+    app.jinja_env.filters["avatar_tone"] = avatar_tone
 
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 

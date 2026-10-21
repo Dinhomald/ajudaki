@@ -3,57 +3,84 @@
 {% block title %}Pessoas{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Pessoas</h1>
-<p class="page-intro">Quem está na rede e o que cada um sabe fazer.</p>
+<div class="page-hero">
+    <h1 class="page-title">Pessoas</h1>
+    <p class="hero-stat"><strong>{{ pessoas|length }}</strong> {{ 'pessoa pronta' if pessoas|length == 1 else 'pessoas prontas' }} para ajudar</p>
+    <span class="demo-note">Dados de demonstração</span>
+</div>
 
-<form class="filters" method="get">
-    <input type="text" name="habilidade" placeholder="Buscar por habilidade (ex.: Excel)" value="{{ filtro_habilidade or '' }}">
+<form class="filters filters-compact" method="get">
+    <label class="search-field">
+        {{ icon('search', 18) }}
+        <input type="search" name="habilidade" placeholder="Buscar habilidade" value="{{ filtro_habilidade or '' }}" aria-label="Buscar habilidade">
+    </label>
 
-    <select name="municipio" onchange="this.form.submit()">
+    <select name="municipio" onchange="this.form.submit()" aria-label="Cidade">
         <option value="">Todas as cidades</option>
         {% for m in municipios %}
         <option value="{{ m.id }}" {{ 'selected' if filtro_municipio == m.id else '' }}>{{ m.name }}</option>
         {% endfor %}
     </select>
 
-    <select name="status" onchange="this.form.submit()">
-        <option value="">Todas</option>
-        <option value="ativo" {{ 'selected' if filtro_status == 'ativo' else '' }}>Ativas</option>
-        <option value="inativo" {{ 'selected' if filtro_status == 'inativo' else '' }}>Inativas</option>
-    </select>
+    {% if mostrar_inativas %}<input type="hidden" name="inativas" value="1">{% endif %}
 </form>
+
+{% set inativas_arg = '1' if mostrar_inativas else None %}
+<nav class="chips" aria-label="Habilidades mais comuns">
+    <a class="chip {{ 'on' if not filtro_habilidade }}" href="{{ url_for('talentos.list', municipio=filtro_municipio, inativas=inativas_arg) }}">Todas</a>
+    {% for nome in habilidades_populares %}
+    <a class="chip {{ 'on' if filtro_habilidade and filtro_habilidade|lower == nome|lower }}" href="{{ url_for('talentos.list', habilidade=nome, municipio=filtro_municipio, inativas=inativas_arg) }}">{{ nome }}</a>
+    {% endfor %}
+</nav>
 
 {% if pessoas %}
 <div class="card-list">
     {% for pessoa in pessoas %}
-    <a class="card" href="{{ url_for('talentos.perfil', user_id=pessoa.id) }}">
-        <div class="card-title">
-            <span class="card-title-with-avatar">
-                {% if pessoa.photo_filename %}
-                <img class="avatar avatar-sm" src="{{ url_for('static', filename='uploads/pessoas/' + pessoa.photo_filename) }}" alt="">
-                {% else %}
-                <span class="avatar avatar-sm">{{ pessoa.public_name[0] }}</span>
+    {% set nome = pessoa.public_name|sem_ficticio %}
+    {% set habilidades = pessoa.has_skills() %}
+    <a class="card person-card" href="{{ url_for('talentos.perfil', user_id=pessoa.id) }}">
+        {% if pessoa.photo_filename %}
+        <img class="avatar avatar-md" src="{{ url_for('static', filename='uploads/pessoas/' + pessoa.photo_filename) }}" alt="">
+        {% else %}
+        <span class="avatar avatar-md avatar-c{{ nome|avatar_tone }}" aria-hidden="true">{{ nome[0] }}</span>
+        {% endif %}
+
+        <div class="person-info">
+            <div class="person-head">
+                <strong>{{ nome }}</strong>
+                {% if pessoa.status != 'ativo' %}
+                {% set b = status_badge('user', pessoa.status) %}
+                <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
+                {% elif pessoa.availability %}
+                <span class="badge badge-good" title="{{ pessoa.availability }}">Disponível</span>
                 {% endif %}
-                {{ pessoa.public_name }}
-            </span>
-            {% if pessoa.status != 'ativo' %}
-            {% set b = status_badge('user', pessoa.status) %}
-            <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
+            </div>
+            <div class="meta"><span>{{ icon('pin') }} {{ pessoa.municipality.name }}</span></div>
+            {% if habilidades %}
+            <div class="tags">
+                {% for skill in habilidades[:2] %}
+                <span class="tag tag-c{{ skill.name|avatar_tone }}">{{ skill.name }}</span>
+                {% endfor %}
+                {% if habilidades|length > 2 %}
+                <span class="tag tag-muted">+{{ habilidades|length - 2 }}</span>
+                {% endif %}
+            </div>
             {% endif %}
-        </div>
-        <div class="meta">
-            <span>{{ icon('pin') }} {{ pessoa.municipality.name }}{% if pessoa.neighborhood %} · {{ pessoa.neighborhood }}{% endif %}</span>
-            {% if pessoa.current_occupation %}<span>{{ icon('briefcase') }} {{ pessoa.current_occupation }}</span>{% endif %}
-        </div>
-        <div class="tags">
-            {% for skill in pessoa.has_skills() %}
-            <span class="tag">{{ skill.name }}</span>
-            {% endfor %}
         </div>
     </a>
     {% endfor %}
 </div>
 {% else %}
 <p class="empty">Ninguém encontrado com esses filtros.</p>
+{% endif %}
+
+{% if total_inativas %}
+<p class="list-footer">
+    {% if mostrar_inativas %}
+    <a href="{{ url_for('talentos.list', habilidade=filtro_habilidade or None, municipio=filtro_municipio) }}">Esconder pessoas inativas</a>
+    {% else %}
+    <a href="{{ url_for('talentos.list', habilidade=filtro_habilidade or None, municipio=filtro_municipio, inativas='1') }}">Mostrar pessoas inativas ({{ total_inativas }})</a>
+    {% endif %}
+</p>
 {% endif %}
 {% endblock %}

@@ -130,6 +130,18 @@ a {
     color: var(--brand);
 }
 
+/* pílula colorida atrás do ícone da aba ativa */
+.tabbar a .icon {
+    box-sizing: content-box;
+    padding: 3px 16px;
+    border-radius: 999px;
+    transition: background 0.15s ease;
+}
+
+.tabbar a.active .icon {
+    background: var(--brand-soft);
+}
+
 /* ---------- BOTÃO FLUTUANTE (+) ---------- */
 
 .fab {
@@ -259,6 +271,152 @@ a {
     border-radius: 999px;
 }
 
+/* busca + cidade numa linha só */
+.filters-compact {
+    flex-wrap: nowrap;
+    margin-bottom: 10px;
+}
+
+.filters-compact select {
+    flex: 0 1 150px;
+    min-width: 0;
+}
+
+.search-field {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text-muted);
+}
+
+.search-field:focus-within {
+    outline: 2px solid var(--brand);
+    outline-offset: -1px;
+    border-color: transparent;
+}
+
+.filters .search-field input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    padding: 10px 0;
+    background: none;
+}
+
+.filters .search-field input:focus {
+    outline: none;
+}
+
+/* atalhos de filtro roláveis */
+.chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    margin: 0 -20px 16px;
+    padding: 2px 20px;
+    scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+    display: none;
+}
+
+.chip {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.chip.on {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+}
+
+/* ---------- CABEÇALHO COLORIDO DAS LISTAS ---------- */
+
+.page-hero {
+    position: relative;
+    overflow: hidden;
+    margin: 4px 0 16px;
+    padding: 18px 20px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, #0b7a5c 0%, #129a74 55%, #27b3a0 100%);
+    color: #fff;
+}
+
+/* bolhas decorativas */
+.page-hero::before,
+.page-hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+}
+
+.page-hero::before {
+    width: 140px;
+    height: 140px;
+    right: -40px;
+    top: -50px;
+}
+
+.page-hero::after {
+    width: 70px;
+    height: 70px;
+    right: 60px;
+    bottom: -35px;
+    background: rgba(255, 214, 102, 0.35);
+}
+
+.page-hero .page-title {
+    margin: 0;
+    color: #fff;
+}
+
+.hero-stat {
+    margin: 2px 0 10px;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-stat strong {
+    font-size: 1.15rem;
+    color: #fff;
+}
+
+.demo-note {
+    display: inline-block;
+    margin: 0;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.list-footer {
+    text-align: center;
+    margin: 18px 0 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
 /* ---------- CARDS ---------- */
 
 .card-list {
@@ -320,6 +478,264 @@ a.card:active {
 .card p {
     margin: 6px 0;
     font-size: 0.94rem;
+}
+
+/* ---------- INÍCIO ---------- */
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.quick-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 6px 12px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-align: center;
+}
+
+.qa-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qa-c0 .qa-icon { background: #0b7a5c; color: #fff; }
+.qa-c1 .qa-icon { background: #2f6fd0; color: #fff; }
+.qa-c3 .qa-icon { background: #e0654f; color: #fff; }
+
+.tile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.tile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    color: inherit;
+    text-decoration: none;
+}
+
+.tile-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 6px;
+}
+
+.count-pill {
+    display: inline-block;
+    min-width: 24px;
+    margin-left: 4px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--brand);
+    color: #fff;
+    font-size: 0.8rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.card .meta .tag {
+    padding: 2px 8px;
+    font-size: 0.75rem;
+}
+
+/* barras horizontais: uma cor por lista, texto sempre na cor do texto */
+.bar-list {
+    list-style: none;
+    margin: 0;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.bar-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.bar-track {
+    height: 8px;
+    border-radius: 4px;
+    background: var(--muted-bg);
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 4px;
+}
+
+.bar-pedem { background: #7b55b8; }
+.bar-oferecem { background: #129a74; }
+
+/* faixa lateral com a cor do status */
+.card-accent {
+    border-left: 5px solid var(--accent, var(--border));
+}
+
+.card-accent-good { --accent: var(--good); }
+.card-accent-warning { --accent: #e0a020; }
+.card-accent-critical { --accent: var(--critical); }
+.card-accent-info { --accent: var(--info); }
+.card-accent-muted { --accent: #c9c4bb; }
+
+/* ---------- CARD DE TROCA (quem ajudou quem) ---------- */
+
+.swap-people {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.swap-arrow {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+    position: relative;
+}
+
+.swap-arrow::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    border-top: 2px dashed var(--border);
+}
+
+.swap-arrow span {
+    position: relative;
+    background: var(--surface);
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+}
+
+.swap-text {
+    margin: 10px 0 2px;
+    font-size: 0.98rem;
+}
+
+.swap-what {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.swap-credit {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: var(--good-bg);
+    color: var(--good);
+}
+
+.swap-credit.pending {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.swap-credit.off {
+    background: var(--muted-bg);
+    color: var(--muted);
+}
+
+.swap-people .badge {
+    margin-left: 4px;
+}
+
+.hero-stat + .hero-stat {
+    margin-top: -6px;
+    font-size: 0.85rem;
+}
+
+.avatar-org {
+    border-radius: 14px;
+}
+
+.clamp-1 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--text-muted);
+}
+
+/* card de pessoa: avatar à esquerda, informações à direita */
+.person-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.person-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.person-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05rem;
+}
+
+.person-head strong {
+    font-weight: 800;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.person-card .meta {
+    margin: 0;
+}
+
+.person-card .tags {
+    margin-top: 6px;
 }
 
 .card-actions {
@@ -726,6 +1142,20 @@ a.card:active {
     font-size: 0.95rem;
     margin-right: 10px;
 }
+
+.avatar-md {
+    width: 52px;
+    height: 52px;
+    font-size: 1.3rem;
+}
+
+/* cores dos avatares sem foto (escolhidas pelo nome) */
+.avatar-c0, .tag-c0 { background: #dcf1e8; color: #075a43; }
+.avatar-c1, .tag-c1 { background: #dfe9fb; color: #234f8f; }
+.avatar-c2, .tag-c2 { background: #fdebc8; color: #855400; }
+.avatar-c3, .tag-c3 { background: #fbe0de; color: #9a2c28; }
+.avatar-c4, .tag-c4 { background: #ece2f8; color: #5b3a8a; }
+.avatar-c5, .tag-c5 { background: #d9f0f3; color: #1d6470; }
 
 .avatar-lg {
     width: 84px;

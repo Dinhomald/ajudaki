@@ -3,43 +3,50 @@
 {% block title %}Pedidos{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Pedidos de ajuda</h1>
-<p class="page-intro">Pessoas e organizações precisando de uma força.</p>
+{% set abertos = necessidades|selectattr('status', 'equalto', 'aberta')|list|length %}
+<div class="page-hero">
+    <h1 class="page-title">Pedidos de ajuda</h1>
+    <p class="hero-stat"><strong>{{ abertos }}</strong> {{ 'pedido esperando' if abertos == 1 else 'pedidos esperando' }} uma força</p>
+    <span class="demo-note">Dados de demonstração</span>
+</div>
 
-<form class="filters" method="get">
-    <input type="text" name="habilidade" placeholder="Buscar por habilidade" value="{{ filtro_habilidade or '' }}">
+<form class="filters filters-compact" method="get">
+    <label class="search-field">
+        {{ icon('search', 18) }}
+        <input type="search" name="habilidade" placeholder="Buscar habilidade" value="{{ filtro_habilidade or '' }}" aria-label="Buscar habilidade">
+    </label>
 
-    <select name="municipio" onchange="this.form.submit()">
+    <select name="municipio" onchange="this.form.submit()" aria-label="Cidade">
         <option value="">Todas as cidades</option>
         {% for m in municipios %}
         <option value="{{ m.id }}" {{ 'selected' if filtro_municipio == m.id else '' }}>{{ m.name }}</option>
         {% endfor %}
     </select>
 
-    <select name="status" onchange="this.form.submit()">
-        <option value="">Todos</option>
-        <option value="aberta" {{ 'selected' if filtro_status == 'aberta' else '' }}>Abertos</option>
-        <option value="atendida" {{ 'selected' if filtro_status == 'atendida' else '' }}>Atendidos</option>
-        <option value="cancelada" {{ 'selected' if filtro_status == 'cancelada' else '' }}>Cancelados</option>
-    </select>
+    {% if filtro_status %}<input type="hidden" name="status" value="{{ filtro_status }}">{% endif %}
 </form>
+
+<nav class="chips" aria-label="Situação do pedido">
+    {% for valor, rotulo in [('', 'Todos'), ('aberta', 'Abertos'), ('atendida', 'Atendidos'), ('cancelada', 'Cancelados')] %}
+    <a class="chip {{ 'on' if (filtro_status or '') == valor }}" href="{{ url_for('necessidades.list', status=valor or None, habilidade=filtro_habilidade or None, municipio=filtro_municipio) }}">{{ rotulo }}</a>
+    {% endfor %}
+</nav>
 
 {% if necessidades %}
 <div class="card-list">
     {% for n in necessidades %}
     {% set b = status_badge('need', n.status) %}
-    <a class="card" href="{{ url_for('necessidades.detail', need_id=n.id) }}">
+    <a class="card card-accent card-accent-{{ b.tone }}" href="{{ url_for('necessidades.detail', need_id=n.id) }}">
         <div class="card-title">
-            <span>{{ n.title }}</span>
+            <span>{{ n.title|sem_ficticio }}</span>
             <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
         </div>
         <div class="meta">
-            <span>{{ n.requester_display_name }}</span>
             <span>{{ icon('pin') }} {{ n.municipality.name }}</span>
-            <span>{{ icon('clock') }} {{ n.hours }}h</span>
+            <span>{{ icon('clock') }} {{ '%g'|format(n.hours) }}h</span>
         </div>
-        {% if n.description %}<p>{{ n.description }}</p>{% endif %}
-        {% if n.skill %}<div class="tags"><span class="tag">{{ n.skill.name }}</span></div>{% endif %}
+        {% if n.description %}<p class="clamp-1">{{ n.description }}</p>{% endif %}
+        {% if n.skill %}<div class="tags"><span class="tag tag-c{{ n.skill.name|avatar_tone }}">{{ n.skill.name }}</span></div>{% endif %}
     </a>
     {% endfor %}
 </div>

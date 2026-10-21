@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask import Blueprint, redirect, render_template, request, url_for
 
+from helpers import total_hours_completed
 from models import Need, Organization, TimeTransaction, User, db
 
 trocas_bp = Blueprint("trocas", __name__, url_prefix="/trocas")
@@ -16,7 +17,12 @@ def list():
         query = query.filter(TimeTransaction.status == status)
 
     trocas = query.order_by(TimeTransaction.created_at.desc()).all()
-    return render_template("trocas.html", trocas=trocas, filtro_status=status)
+    return render_template(
+        "trocas.html",
+        trocas=trocas,
+        filtro_status=status,
+        horas_trocadas=total_hours_completed(),
+    )
 
 
 @trocas_bp.route("/nova", methods=["GET", "POST"])

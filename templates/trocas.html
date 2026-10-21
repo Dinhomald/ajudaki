@@ -2,39 +2,71 @@
 {% from "_icons.html" import icon %}
 {% block title %}Trocas{% endblock %}
 
-{% block content %}
-<h1 class="page-title">Trocas</h1>
-<p class="page-intro">1 hora ajudando alguém = 1 hora de crédito.</p>
+{% macro avatar_pessoa(pessoa) -%}
+{% set nome = pessoa.public_name|sem_ficticio %}
+{% if pessoa.photo_filename %}
+<img class="avatar avatar-md" src="{{ url_for('static', filename='uploads/pessoas/' + pessoa.photo_filename) }}" alt="">
+{% else %}
+<span class="avatar avatar-md avatar-c{{ nome|avatar_tone }}" aria-hidden="true">{{ nome[0] }}</span>
+{% endif %}
+{%- endmacro %}
 
-<form class="filters" method="get">
-    <select name="status" onchange="this.form.submit()">
-        <option value="">Todas</option>
-        <option value="pendente" {{ 'selected' if filtro_status == 'pendente' else '' }}>Pendentes</option>
-        <option value="concluida" {{ 'selected' if filtro_status == 'concluida' else '' }}>Concluídas</option>
-        <option value="cancelada" {{ 'selected' if filtro_status == 'cancelada' else '' }}>Canceladas</option>
-    </select>
-</form>
+{% block content %}
+<div class="page-hero">
+    <h1 class="page-title">Trocas</h1>
+    <p class="hero-stat"><strong>{{ '%g'|format(horas_trocadas) }}h</strong> de ajuda já trocadas na rede</p>
+    <p class="hero-stat">Quem ajuda ganha 1 hora de crédito por hora, e pode usar para pedir ajuda depois.</p>
+    <span class="demo-note">Dados de demonstração</span>
+</div>
+
+<nav class="chips" aria-label="Situação da troca">
+    {% for valor, rotulo in [('', 'Todas'), ('pendente', 'Pendentes'), ('concluida', 'Concluídas'), ('cancelada', 'Canceladas')] %}
+    <a class="chip {{ 'on' if (filtro_status or '') == valor }}" href="{{ url_for('trocas.list', status=valor or None) }}">{{ rotulo }}</a>
+    {% endfor %}
+</nav>
 
 {% if trocas %}
 <div class="card-list">
     {% for t in trocas %}
     {% set b = status_badge('transaction', t.status) %}
-    <div class="card">
-        <div class="card-title">
-            <span>{{ t.provider.public_name }} → {{ t.requester_display_name }}</span>
+    {% set quem = t.provider.public_name|sem_ficticio %}
+    {% set para = t.requester_display_name|sem_ficticio %}
+    {% set horas = '%g'|format(t.hours) %}
+    {% set o_que = t.description or (t.need.title if t.need else '') %}
+    <div class="card card-accent card-accent-{{ b.tone }}">
+        <div class="swap-people">
+            {{ avatar_pessoa(t.provider) }}
+            <div class="swap-arrow"><span>{{ icon('clock', 14) }} {{ horas }}h</span></div>
+            {% if t.requester_user %}
+            {{ avatar_pessoa(t.requester_user) }}
+            {% else %}
+            <span class="avatar avatar-md avatar-org avatar-c{{ para|avatar_tone }}" aria-hidden="true">{{ icon('building', 24) }}</span>
+            {% endif %}
             <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
         </div>
-        <div class="meta">
-            <span>{{ icon('clock') }} {{ t.hours }}h</span>
-            {% if t.need %}<span>{{ t.need.title }}</span>{% endif %}
-        </div>
+
+        <p class="swap-text">
+            {% if t.status == 'concluida' %}<strong>{{ quem }}</strong> ajudou <strong>{{ para }}</strong>
+            {% elif t.status == 'pendente' %}<strong>{{ quem }}</strong> vai ajudar <strong>{{ para }}</strong>
+            {% else %}<strong>{{ quem }}</strong> ia ajudar <strong>{{ para }}</strong>{% endif %}
+        </p>
+        {% if o_que %}<p class="swap-what">{{ o_que|sem_ficticio }}</p>{% endif %}
+
+        {% if t.status == 'concluida' %}
+        <span class="swap-credit">+{{ horas }}h de crédito para {{ quem }}</span>
+        {% elif t.status == 'pendente' %}
+        <span class="swap-credit pending">{{ quem }} ganha {{ horas }}h quando confirmar</span>
+        {% else %}
+        <span class="swap-credit off">Cancelada, sem crédito</span>
+        {% endif %}
+
         {% if t.status == 'pendente' %}
         <div class="card-actions">
             <form method="post" action="{{ url_for('trocas.cancelar', troca_id=t.id) }}">
                 <button class="btn btn-sm" type="submit">Cancelar</button>
             </form>
             <form method="post" action="{{ url_for('trocas.concluir', troca_id=t.id) }}">
-                <button class="btn btn-sm btn-primary" type="submit">Concluir</button>
+                <button class="btn btn-sm btn-primary" type="submit">Confirmar ajuda</button>
             </form>
         </div>
         {% endif %}

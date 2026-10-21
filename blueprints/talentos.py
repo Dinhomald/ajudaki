@@ -46,14 +46,15 @@ def save_photo(file_storage):
 def list():
     municipio_id = request.args.get("municipio", type=int)
     habilidade = request.args.get("habilidade", "").strip()
-    status = request.args.get("status", "")
+    # Por padrão só mostra quem está ativo: quem procura ajuda quer gente disponível.
+    mostrar_inativas = request.args.get("inativas") == "1"
 
     query = User.query
 
     if municipio_id:
         query = query.filter(User.municipality_id == municipio_id)
-    if status in ("ativo", "inativo"):
-        query = query.filter(User.status == status)
+    if not mostrar_inativas:
+        query = query.filter(User.status == "ativo")
     if habilidade:
         query = (
             query.join(UserSkill)
@@ -64,14 +65,29 @@ def list():
 
     pessoas = query.order_by(User.public_name).all()
     municipios = Municipality.query.order_by(Municipality.name).all()
+    total_inativas = User.query.filter(User.status == "inativo").count()
+
+    # Atalhos de busca: as habilidades que mais gente da rede possui.
+    habilidades_populares = [
+        nome
+        for nome, _ in db.session.query(Skill.name, db.func.count(UserSkill.id))
+        .join(UserSkill)
+        .filter(UserSkill.kind == "possui")
+        .group_by(Skill.name)
+        .order_by(db.func.count(UserSkill.id).desc(), Skill.name)
+        .limit(8)
+        .all()
+    ]
 
     return render_template(
         "talentos.html",
         pessoas=pessoas,
         municipios=municipios,
+        habilidades_populares=habilidades_populares,
         filtro_municipio=municipio_id,
         filtro_habilidade=habilidade,
-        filtro_status=status,
+        mostrar_inativas=mostrar_inativas,
+        total_inativas=total_inativas,
     )
 
 

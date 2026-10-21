@@ -1,38 +1,88 @@
 {% extends "base.html" %}
+{% from "_icons.html" import icon %}
 {% block title %}Início{% endblock %}
 
-{% block content %}
-<h1 class="page-title">Olá!</h1>
-<p class="page-intro">Veja como a rede está se ajudando.</p>
+{% macro barras(itens, cor) -%}
+{% set maior = itens|map(attribute=1)|max %}
+<ul class="bar-list">
+    {% for nome, total in itens %}
+    <li title="{{ nome }}: {{ total }}">
+        <div class="bar-label"><span>{{ nome }}</span><span class="ranked-value">{{ total }}</span></div>
+        <div class="bar-track"><div class="bar-fill bar-{{ cor }}" style="width: {{ (total / maior * 100)|round }}%"></div></div>
+    </li>
+    {% endfor %}
+</ul>
+{%- endmacro %}
 
-<div class="highlight">
-    <div class="stat-row">
-        <div class="stat"><span class="stat-value">{{ resumo.pessoas }}</span><span class="stat-label">pessoas</span></div>
-        <div class="stat"><span class="stat-value">{{ resumo.organizacoes }}</span><span class="stat-label">organizações</span></div>
-        <div class="stat"><span class="stat-value">{{ resumo.horas_disponiveis }}h</span><span class="stat-label">disponíveis para ajudar</span></div>
-        <div class="stat"><span class="stat-value">{{ resumo.horas_trocadas }}h</span><span class="stat-label">já trocadas</span></div>
-    </div>
+{% block content %}
+<div class="page-hero">
+    <h1 class="page-title">Olá!</h1>
+    <p class="hero-stat">A rede já trocou <strong>{{ '%g'|format(resumo.horas_trocadas) }}h</strong> de ajuda</p>
+    <span class="demo-note">Dados de demonstração</span>
+</div>
+
+<div class="quick-actions">
+    <a class="quick-action qa-c3" href="{{ url_for('necessidades.nova') }}">
+        <span class="qa-icon">{{ icon('hand', 22) }}</span>Pedir ajuda
+    </a>
+    <a class="quick-action qa-c0" href="{{ url_for('necessidades.list', status='aberta') }}">
+        <span class="qa-icon">{{ icon('users', 22) }}</span>Quero ajudar
+    </a>
+    <a class="quick-action qa-c1" href="{{ url_for('trocas.nova') }}">
+        <span class="qa-icon">{{ icon('swap', 22) }}</span>Registrar troca
+    </a>
+</div>
+
+<div class="tile-grid">
+    <a class="tile" href="{{ url_for('talentos.list') }}">
+        <span class="tile-icon avatar-c1">{{ icon('users', 20) }}</span>
+        <span class="stat-value">{{ resumo.pessoas_ativas }}</span>
+        <span class="stat-label">pessoas ativas</span>
+    </a>
+    <a class="tile" href="{{ url_for('organizacoes.list') }}">
+        <span class="tile-icon avatar-c4">{{ icon('building', 20) }}</span>
+        <span class="stat-value">{{ resumo.organizacoes }}</span>
+        <span class="stat-label">organizações</span>
+    </a>
+    <a class="tile" href="{{ url_for('talentos.list') }}">
+        <span class="tile-icon avatar-c2">{{ icon('clock', 20) }}</span>
+        <span class="stat-value">{{ '%g'|format(resumo.horas_disponiveis) }}h</span>
+        <span class="stat-label">disponíveis para ajudar</span>
+    </a>
+    <a class="tile" href="{{ url_for('necessidades.list', status='atendida') }}">
+        <span class="tile-icon avatar-c0">{{ icon('hand', 20) }}</span>
+        <span class="stat-value">{{ resumo.necessidades_atendidas }}</span>
+        <span class="stat-label">pedidos atendidos</span>
+    </a>
 </div>
 
 <div class="section">
     <div class="section-header">
-        <h2>Pedidos</h2>
-        <a href="{{ url_for('necessidades.list') }}">Ver todos</a>
+        <h2>Esperando ajuda <span class="count-pill">{{ resumo.necessidades_abertas }}</span></h2>
+        <a href="{{ url_for('necessidades.list', status='aberta') }}">Ver todos</a>
     </div>
-    <div class="stat-row">
-        <div class="stat"><span class="stat-value">{{ resumo.necessidades_abertas }}</span><span class="stat-label">esperando ajuda</span></div>
-        <div class="stat"><span class="stat-value">{{ resumo.necessidades_atendidas }}</span><span class="stat-label">já atendidos</span></div>
+    {% if pedidos_recentes %}
+    <div class="card-list">
+        {% for n in pedidos_recentes %}
+        <a class="card card-accent card-accent-good" href="{{ url_for('necessidades.detail', need_id=n.id) }}">
+            <div class="card-title"><span>{{ n.title|sem_ficticio }}</span>{{ icon('chevron', 18) }}</div>
+            <div class="meta">
+                <span>{{ icon('pin') }} {{ n.municipality.name }}</span>
+                <span>{{ icon('clock') }} {{ '%g'|format(n.hours) }}h</span>
+                {% if n.skill %}<span class="tag tag-c{{ n.skill.name|avatar_tone }}">{{ n.skill.name }}</span>{% endif %}
+            </div>
+        </a>
+        {% endfor %}
     </div>
+    {% else %}
+    <p class="empty">Nenhum pedido aberto agora.</p>
+    {% endif %}
 </div>
 
 <div class="section">
     <h2>O que mais pedem</h2>
     {% if resumo.top_habilidades_procuradas %}
-    <ul class="ranked-list">
-        {% for nome, total in resumo.top_habilidades_procuradas %}
-        <li><span>{{ nome }}</span><span class="ranked-value">{{ total }}</span></li>
-        {% endfor %}
-    </ul>
+    {{ barras(resumo.top_habilidades_procuradas, 'pedem') }}
     {% else %}
     <p class="empty">Ainda não há pedidos.</p>
     {% endif %}
@@ -41,11 +91,7 @@
 <div class="section">
     <h2>O que mais oferecem</h2>
     {% if resumo.top_habilidades_ofertadas %}
-    <ul class="ranked-list">
-        {% for nome, total in resumo.top_habilidades_ofertadas %}
-        <li><span>{{ nome }}</span><span class="ranked-value">{{ total }}</span></li>
-        {% endfor %}
-    </ul>
+    {{ barras(resumo.top_habilidades_ofertadas, 'oferecem') }}
     {% else %}
     <p class="empty">Ainda não há ofertas.</p>
     {% endif %}
