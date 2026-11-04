@@ -7,9 +7,12 @@ sao identificados como "(dado ficticio)" para deixar isso explicito
 no ambiente de desenvolvimento.
 """
 
+import os
+import shutil
 from datetime import datetime, timedelta
 
-from app import create_app
+from app import UPLOAD_FOLDER, create_app
+from equipe import EQUIPE
 from models import (
     Municipality,
     Need,
@@ -43,6 +46,7 @@ with app.app_context():
         "Direito básico", "Costura", "Culinária", "Marcenaria",
         "Violão", "Jardinagem", "Português", "Fotografia",
         "Elétrica básica", "Cuidados com idosos",
+        "Engenharia de dados", "Desenvolvimento de sites",
     ]
     skills = {nome: Skill(name=nome) for nome in nomes_habilidades}
     db.session.add_all(skills.values())
@@ -207,6 +211,55 @@ with app.app_context():
                 )
             )
         usuarios[dados["public_name"]] = user
+
+    # Equipe que desenvolveu o Ajudaki: pessoas reais, com foto e nome (sem o
+    # sufixo de dado fictício). As fotos vêm de static/equipe e são copiadas
+    # para a pasta de fotos de perfil, que não vai para o Git.
+    perfis_equipe = {
+        "Ronaldo": {
+            "description": (
+                "Sou de Caxias do Sul e trabalho com engenharia de dados e desenvolvimento de software. "
+                "Posso ajudar com planilhas, organização de dados, automações, sites e problemas no computador. "
+                "Explico com calma e sem termos complicados."
+            ),
+            "current_occupation": "Engenheiro de dados e desenvolvedor",
+            "availability": "Sábados à tarde",
+            "possui": ["Engenharia de dados", "Desenvolvimento de sites", "Manutenção de computadores"],
+            "ofertas": [{"title": "Organizar dados e montar relatórios", "skill": "Engenharia de dados", "hours": 3}],
+        },
+    }
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    pasta_equipe = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "equipe")
+    for membro in EQUIPE:
+        foto = None
+        if membro.get("foto"):
+            foto = f"equipe-{membro['foto']}"
+            shutil.copy(os.path.join(pasta_equipe, membro["foto"]), os.path.join(UPLOAD_FOLDER, foto))
+        perfil = perfis_equipe.get(membro["nome"], {})
+        user = User(
+            public_name=f"{membro['nome']} {membro.get('sobrenome', '')}".strip(),
+            municipality_id=caxias.id,
+            photo_filename=foto,
+            description=perfil.get("description"),
+            current_occupation=perfil.get("current_occupation"),
+            availability=perfil.get("availability", ""),
+            status="ativo",
+        )
+        db.session.add(user)
+        db.session.flush()
+        for nome in perfil.get("possui", []):
+            db.session.add(UserSkill(user_id=user.id, skill_id=skills[nome].id, kind="possui"))
+        for oferta in perfil.get("ofertas", []):
+            db.session.add(
+                Offer(
+                    user_id=user.id,
+                    skill_id=skills[oferta["skill"]].id,
+                    title=oferta["title"],
+                    hours_available=oferta["hours"],
+                    status="ativa",
+                )
+            )
+        usuarios[user.public_name] = user
 
     db.session.flush()
 

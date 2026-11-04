@@ -41,7 +41,12 @@ def expor_quem_esta_usando():
 def entrar():
     pessoas = User.query.filter_by(status="ativo").order_by(User.public_name).all()
     organizacoes = Organization.query.order_by(Organization.name).all()
-    return render_template("entrar.html", pessoas=pessoas, organizacoes=organizacoes)
+    # A equipe que fez o app aparece primeiro, na mesma ordem da lateral.
+    equipe = sorted(
+        (p for p in pessoas if (p.photo_filename or "").startswith("equipe-")), key=lambda p: p.id
+    )
+    pessoas = [p for p in pessoas if p not in equipe]
+    return render_template("entrar.html", equipe=equipe, pessoas=pessoas, organizacoes=organizacoes)
 
 
 @conta_bp.route("/entrar", methods=["POST"])
