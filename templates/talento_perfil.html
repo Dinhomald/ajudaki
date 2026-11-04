@@ -16,6 +16,9 @@
         {% if pessoa.current_occupation %}<span>{{ icon('briefcase') }} {{ pessoa.current_occupation }}</span>{% endif %}
         {% if pessoa.availability %}<span>{{ icon('calendar') }} {{ pessoa.availability }}</span>{% endif %}
     </div>
+    {% if nota_media %}
+    <p class="hero-rating"><span class="star-on">★</span> <strong>{{ ('%.1f'|format(nota_media)).replace('.', ',') }}</strong> · {{ total_avaliacoes }} {{ 'avaliação' if total_avaliacoes == 1 else 'avaliações' }}</p>
+    {% endif %}
     <form method="post" action="{{ url_for('talentos.alternar_status', user_id=pessoa.id) }}">
         <button class="badge badge-{{ b.tone }} badge-button" type="submit" title="Alternar entre ativo e inativo">
             {{ b.label }} · alterar
@@ -43,6 +46,21 @@
         </div>
     </div>
 </div>
+
+{% if depoimentos %}
+<div class="section">
+    <h2>O que dizem</h2>
+    <div class="card-list">
+        {% for d in depoimentos %}
+        <div class="card quote-card">
+            <span class="stars" role="img" aria-label="{{ d.rating }} de 5 estrelas">{% for i in range(5) %}<span class="{{ 'on' if i < d.rating }}">★</span>{% endfor %}</span>
+            <q>{{ d.rating_comment }}</q>
+            <span class="hint">{{ d.requester_display_name|sem_ficticio }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 
 <div class="section">
     <h2>Sabe fazer</h2>

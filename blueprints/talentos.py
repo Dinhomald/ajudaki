@@ -3,8 +3,8 @@ import uuid
 from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
-from helpers import user_balance
-from models import Municipality, Offer, Skill, User, UserSkill, db
+from helpers import user_balance, user_rating
+from models import Municipality, Offer, Skill, TimeTransaction, User, UserSkill, db
 
 talentos_bp = Blueprint("talentos", __name__, url_prefix="/talentos")
 
@@ -128,8 +128,20 @@ def novo():
 def perfil(user_id):
     pessoa = User.query.get_or_404(user_id)
     oferecidas, recebidas, saldo = user_balance(user_id)
+    nota_media, total_avaliacoes = user_rating(user_id)
+    depoimentos = (
+        TimeTransaction.query.filter(
+            TimeTransaction.provider_id == user_id, TimeTransaction.rating_comment.isnot(None)
+        )
+        .order_by(TimeTransaction.completed_at.desc())
+        .limit(3)
+        .all()
+    )
     return render_template(
         "talento_perfil.html",
+        nota_media=nota_media,
+        total_avaliacoes=total_avaliacoes,
+        depoimentos=depoimentos,
         pessoa=pessoa,
         horas_oferecidas=oferecidas,
         horas_recebidas=recebidas,

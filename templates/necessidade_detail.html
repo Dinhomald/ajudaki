@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
-{% from "_ui.html" import avatar %}
+{% from "_ui.html" import avatar, avaliacao, confirmar_troca %}
 {% block title %}{{ need.title|sem_ficticio }}{% endblock %}
 
 {% block content %}
@@ -67,16 +67,7 @@
                 <span class="swap-credit pending">{{ quem }} ganha {{ horas }}h quando confirmar</span>
             </div>
         </a>
-        <div class="card-actions">
-            <form method="post" action="{{ url_for('trocas.cancelar', troca_id=ajuda_combinada.id) }}">
-                <input type="hidden" name="next" value="{{ request.path }}">
-                <button class="btn btn-sm" type="submit">Cancelar</button>
-            </form>
-            <form method="post" action="{{ url_for('trocas.concluir', troca_id=ajuda_combinada.id) }}">
-                <input type="hidden" name="next" value="{{ request.path }}">
-                <button class="btn btn-sm btn-primary" type="submit">Confirmar ajuda</button>
-            </form>
-        </div>
+        {{ confirmar_troca(ajuda_combinada, request.path) }}
     </div>
 </div>
 
@@ -91,6 +82,7 @@
             <span class="swap-credit">+{{ '%g'|format(ajuda_feita.hours) }}h de crédito para {{ quem }}</span>
         </div>
     </a>
+    <div class="card rating-card">{{ avaliacao(ajuda_feita, request.path) }}</div>
 </div>
 {% endif %}
 

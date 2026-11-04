@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
@@ -178,6 +179,13 @@ class TimeTransaction(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     completed_at = db.Column(db.DateTime)
 
+    # Prova de que a ajuda aconteceu: quem recebeu passa este código para quem
+    # ajudou, e só com ele a troca é confirmada (como o código de entrega de apps).
+    confirmation_code = db.Column(db.String(4), default=lambda: new_confirmation_code())
+    proof_photo = db.Column(db.String(255))  # foto opcional da ajuda acontecendo
+    rating = db.Column(db.Integer)  # 1 a 5, dada por quem recebeu
+    rating_comment = db.Column(db.String(200))
+
     provider = db.relationship("User", foreign_keys=[provider_id])
     requester_user = db.relationship("User", foreign_keys=[requester_user_id])
     requester_organization = db.relationship("Organization")
@@ -190,3 +198,35 @@ class TimeTransaction(db.Model):
         if self.requester_organization:
             return self.requester_organization.name
         return "Não informado"
+
+
+def new_confirmation_code():
+    return f"{secrets.randbelow(10000):04d}"
+
+
+# Colunas acrescentadas depois da primeira versão. O SQLite não as cria em um
+# banco que já existe, então adicionamos aqui (bancos novos já nascem com elas).
+NEW_COLUMNS = {
+    "time_transactions": {
+        "confirmation_code": "VARCHAR(4)",
+        "proof_photo": "VARCHAR(255)",
+        "rating": "INTEGER",
+        "rating_comment": "VARCHAR(200)",
+    },
+}
+
+
+def ensure_new_columns():
+    for table, columns in NEW_COLUMNS.items():
+        existing = {row[1] for row in db.session.execute(db.text(f"PRAGMA table_info({table})"))}
+        for name, sql_type in columns.items():
+            if name not in existing:
+                db.session.execute(db.text(f"ALTER TABLE {table} ADD COLUMN {name} {sql_type}"))
+    # trocas antigas sem código ganham um, para poderem ser confirmadas
+    db.session.execute(
+        db.text(
+            "UPDATE time_transactions SET confirmation_code = printf('%04d', abs(random()) % 10000) "
+            "WHERE confirmation_code IS NULL"
+        )
+    )
+    db.session.commit()

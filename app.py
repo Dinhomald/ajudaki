@@ -11,7 +11,7 @@ from blueprints.talentos import talentos_bp
 from blueprints.territorio import territorio_bp
 from blueprints.trocas import trocas_bp
 from helpers import sem_ficticio, status_badge
-from models import db
+from models import db, ensure_new_columns
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_PATH = os.path.join(BASE_DIR, "ajudaki.db")
@@ -42,6 +42,7 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        ensure_new_columns()
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(territorio_bp)

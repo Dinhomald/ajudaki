@@ -82,13 +82,34 @@ def back_to_origin():
 @trocas_bp.route("/<int:troca_id>/concluir", methods=["POST"])
 def concluir(troca_id):
     troca = TimeTransaction.query.get_or_404(troca_id)
-    if troca.status == "pendente":
-        troca.status = "concluida"
-        troca.completed_at = datetime.utcnow()
-        if troca.need_id:
-            troca.need.status = "atendida"
+    if troca.status != "pendente":
+        return back_to_origin()
+
+    # Só confirma com o código que quem recebeu a ajuda tem em mãos.
+    codigo = request.form.get("codigo", "").strip()
+    if codigo != troca.confirmation_code:
+        flash("Código incorreto. Peça o código de 4 dígitos para quem recebeu a ajuda.", "erro")
+        return back_to_origin()
+
+    troca.status = "concluida"
+    troca.completed_at = datetime.utcnow()
+    if troca.need_id:
+        troca.need.status = "atendida"
+    db.session.commit()
+    flash(f"🎉 {sem_ficticio(troca.provider.public_name)} ganhou {horas_txt(troca.hours)} de crédito!", "celebrar")
+    return back_to_origin()
+
+
+@trocas_bp.route("/<int:troca_id>/avaliar", methods=["POST"])
+def avaliar(troca_id):
+    """Quem recebeu a ajuda dá de 1 a 5 estrelas (uma vez só, depois de confirmada)."""
+    troca = TimeTransaction.query.get_or_404(troca_id)
+    nota = request.form.get("nota", type=int)
+    if troca.status == "concluida" and troca.rating is None and nota in range(1, 6):
+        troca.rating = nota
+        troca.rating_comment = request.form.get("comentario", "").strip()[:200] or None
         db.session.commit()
-        flash(f"🎉 {sem_ficticio(troca.provider.public_name)} ganhou {horas_txt(troca.hours)} de crédito!", "celebrar")
+        flash("Obrigado pela avaliação! Ela aparece no perfil de quem ajudou.")
     return back_to_origin()
 
 

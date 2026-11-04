@@ -506,5 +506,26 @@ with app.app_context():
             )
         )
 
+    # Avaliações de quem recebeu a ajuda. A troca concluída mais recente fica sem
+    # avaliação, para mostrar o formulário de estrelas na demonstração.
+    db.session.flush()
+    notas = [5, 4, 5, 5, 4, 5, 3, 5, 5, 4]
+    comentarios = [
+        "Muito paciente, explicou tudo com calma!",
+        None,
+        "Chegou no horário e resolveu rapidinho.",
+        "Fez toda a diferença para a nossa campanha.",
+        None,
+        "Super atenciosa com os moradores do lar.",
+        "Foi bom, mas atrasou um pouco.",
+        "Recomendo demais!",
+    ]
+    concluidas = (
+        TimeTransaction.query.filter_by(status="concluida").order_by(TimeTransaction.completed_at).all()
+    )
+    for i, troca in enumerate(concluidas[:-1]):
+        troca.rating = notas[i % len(notas)]
+        troca.rating_comment = comentarios[i % len(comentarios)]
+
     db.session.commit()
     print("Banco populado com dados ficticios em ajudaki.db")

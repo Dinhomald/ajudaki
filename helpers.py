@@ -92,6 +92,16 @@ def user_balance(user_id):
     return offered, received, offered - received
 
 
+def user_rating(user_id):
+    """Média das estrelas recebidas como quem ajudou: (média, quantidade)."""
+    media, total = (
+        db.session.query(func.avg(TimeTransaction.rating), func.count(TimeTransaction.rating))
+        .filter(TimeTransaction.provider_id == user_id, TimeTransaction.rating.isnot(None))
+        .one()
+    )
+    return (round(media, 1) if media else None), total
+
+
 def organization_hours_received(organization_id):
     return (
         db.session.query(func.coalesce(func.sum(TimeTransaction.hours), 0.0))

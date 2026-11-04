@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
-{% from "_ui.html" import avatar %}
+{% from "_ui.html" import avatar, avaliacao, confirmar_troca %}
 {% block title %}Trocas{% endblock %}
 
 {% block content %}
@@ -53,15 +53,9 @@
         {% endif %}
 
         {% if t.status == 'pendente' %}
-        <div class="card-actions">
-            <form method="post" action="{{ url_for('trocas.cancelar', troca_id=t.id) }}">
-                <button class="btn btn-sm" type="submit">Cancelar</button>
-            </form>
-            <form method="post" action="{{ url_for('trocas.concluir', troca_id=t.id) }}">
-                <button class="btn btn-sm btn-primary" type="submit">Confirmar ajuda</button>
-            </form>
-        </div>
+        {{ confirmar_troca(t, request.full_path) }}
         {% endif %}
+        {{ avaliacao(t, request.full_path) }}
     </div>
     {% endfor %}
 </div>
