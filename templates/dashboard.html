@@ -4,45 +4,48 @@
 {% block title %}Início{% endblock %}
 
 {% block content %}
-<div class="page-hero">
-    <h1 class="page-title">Olá!</h1>
-    <p class="hero-stat">A rede já trocou <strong data-countup>{{ '%g'|format(resumo.horas_trocadas) }}h</strong> de ajuda</p>
+{# Início pensado para quem usa pouco celular: uma pergunta, duas escolhas grandes, frases curtas. #}
+<div class="page-hero home-hero">
+    <div class="hero-top">
+        <h1 class="page-title" data-ler>Olá! O que você quer fazer hoje?</h1>
+        <button class="listen-button" type="button" onclick="lerTela(this)" aria-label="Ouvir esta tela">
+            {{ icon('volume', 20) }} <span>Ouvir</span>
+        </button>
+    </div>
     <span class="demo-note">Dados de demonstração</span>
 </div>
 
-<div class="quick-actions">
-    <a class="quick-action qa-c3" href="{{ url_for('necessidades.nova') }}">
-        <span class="qa-icon">{{ icon('hand', 22) }}</span>Pedir ajuda
+<div class="big-choices">
+    <a class="big-choice choice-need" href="{{ url_for('necessidades.nova') }}" data-ler>
+        <span class="big-choice-icon">{{ icon('hand', 34) }}</span>
+        <span class="big-choice-text">
+            <strong>Preciso de ajuda</strong>
+            <span>Conte o que você precisa. Alguém da sua cidade pode ajudar.</span>
+        </span>
+        {{ icon('chevron', 24) }}
     </a>
-    <a class="quick-action qa-c0" href="{{ url_for('necessidades.list', status='aberta') }}">
-        <span class="qa-icon">{{ icon('users', 22) }}</span>Quero ajudar
+    <a class="big-choice choice-help" href="{{ url_for('necessidades.list', status='aberta') }}" data-ler>
+        <span class="big-choice-icon">{{ icon('users', 34) }}</span>
+        <span class="big-choice-text">
+            <strong>Quero ajudar alguém</strong>
+            <span>Veja quem está precisando. Cada hora de ajuda vira crédito para você.</span>
+        </span>
+        {{ icon('chevron', 24) }}
     </a>
-    <a class="quick-action qa-c1" href="{{ url_for('trocas.nova') }}">
-        <span class="qa-icon">{{ icon('swap', 22) }}</span>Registrar troca
+    <a class="small-choice" href="{{ url_for('trocas.list', status='pendente') }}" data-ler>
+        {{ icon('lock', 20) }}
+        <span><strong>Já combinei uma ajuda</strong> · confirmar com o código</span>
+        {{ icon('chevron', 18) }}
     </a>
 </div>
 
-<div class="tile-grid">
-    <a class="tile" href="{{ url_for('talentos.list') }}">
-        <span class="tile-icon avatar-c1">{{ icon('users', 20) }}</span>
-        <span class="stat-value" data-countup>{{ resumo.pessoas_ativas }}</span>
-        <span class="stat-label">pessoas ativas</span>
-    </a>
-    <a class="tile" href="{{ url_for('organizacoes.list') }}">
-        <span class="tile-icon avatar-c4">{{ icon('building', 20) }}</span>
-        <span class="stat-value" data-countup>{{ resumo.organizacoes }}</span>
-        <span class="stat-label">organizações</span>
-    </a>
-    <a class="tile" href="{{ url_for('talentos.list') }}">
-        <span class="tile-icon avatar-c2">{{ icon('clock', 20) }}</span>
-        <span class="stat-value" data-countup>{{ '%g'|format(resumo.horas_disponiveis) }}h</span>
-        <span class="stat-label">disponíveis para ajudar</span>
-    </a>
-    <a class="tile" href="{{ url_for('necessidades.list', status='atendida') }}">
-        <span class="tile-icon avatar-c0">{{ icon('hand', 20) }}</span>
-        <span class="stat-value" data-countup>{{ resumo.necessidades_atendidas }}</span>
-        <span class="stat-label">pedidos atendidos</span>
-    </a>
+<div class="section">
+    <h2 data-ler>Como funciona</h2>
+    <ol class="how-steps">
+        <li data-ler><span class="how-num">1</span><span class="how-icon avatar-c3">{{ icon('hand', 24) }}</span><span><strong>Peça ou ofereça</strong> uma ajuda.</span></li>
+        <li data-ler><span class="how-num">2</span><span class="how-icon avatar-c2">{{ icon('users', 24) }}</span><span><strong>Combine</strong> com a pessoa da sua cidade.</span></li>
+        <li data-ler><span class="how-num">3</span><span class="how-icon avatar-c0">{{ icon('clock', 24) }}</span><span>Quem ajudou <strong>ganha horas</strong> para pedir ajuda depois.</span></li>
+    </ol>
 </div>
 
 <div class="section">
@@ -67,6 +70,33 @@
     {% else %}
     <p class="empty">Nenhum pedido aberto agora.</p>
     {% endif %}
+</div>
+
+<div class="section">
+    <h2>A rede em números</h2>
+    <p class="hint" style="margin: -4px 0 10px">Já foram <strong data-countup>{{ '%g'|format(resumo.horas_trocadas) }}h</strong> de ajuda trocadas.</p>
+<div class="tile-grid">
+    <a class="tile" href="{{ url_for('talentos.list') }}">
+        <span class="tile-icon avatar-c1">{{ icon('users', 20) }}</span>
+        <span class="stat-value" data-countup>{{ resumo.pessoas_ativas }}</span>
+        <span class="stat-label">pessoas ativas</span>
+    </a>
+    <a class="tile" href="{{ url_for('organizacoes.list') }}">
+        <span class="tile-icon avatar-c4">{{ icon('building', 20) }}</span>
+        <span class="stat-value" data-countup>{{ resumo.organizacoes }}</span>
+        <span class="stat-label">organizações</span>
+    </a>
+    <a class="tile" href="{{ url_for('talentos.list') }}">
+        <span class="tile-icon avatar-c2">{{ icon('clock', 20) }}</span>
+        <span class="stat-value" data-countup>{{ '%g'|format(resumo.horas_disponiveis) }}h</span>
+        <span class="stat-label">disponíveis para ajudar</span>
+    </a>
+    <a class="tile" href="{{ url_for('necessidades.list', status='atendida') }}">
+        <span class="tile-icon avatar-c0">{{ icon('hand', 20) }}</span>
+        <span class="stat-value" data-countup>{{ resumo.necessidades_atendidas }}</span>
+        <span class="stat-label">pedidos atendidos</span>
+    </a>
+</div>
 </div>
 
 <div class="section">

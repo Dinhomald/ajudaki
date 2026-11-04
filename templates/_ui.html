@@ -52,14 +52,21 @@
 {% set para = t.requester_display_name|sem_ficticio %}
 {% set quem = t.provider.public_name|sem_ficticio %}
 <details class="code-reveal">
-    <summary>{{ icon('search', 16) }} Sou {{ para }}: ver código de confirmação</summary>
+    <summary>
+        <span class="code-reveal-icon">{{ icon('lock', 18) }}</span>
+        <span class="code-reveal-text"><strong>Ver código de confirmação</strong><small>Só para {{ para }}, que recebeu a ajuda</small></span>
+        <span class="code-reveal-chevron">{{ icon('chevron', 18) }}</span>
+    </summary>
     <p class="hint">Passe este código para {{ quem }} <strong>só depois</strong> que a ajuda acontecer.</p>
     <div class="code-big" aria-label="Código {{ t.confirmation_code }}">{% for d in t.confirmation_code %}<span>{{ d }}</span>{% endfor %}</div>
 </details>
+<p class="confirm-hint">{{ quem }}: digite o código que {{ para }} vai te passar.</p>
 <form class="confirm-form" method="post" action="{{ url_for('trocas.concluir', troca_id=t.id) }}">
     <input type="hidden" name="next" value="{{ destino }}">
     <input class="code-input" type="text" name="codigo" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required
-           placeholder="Código" autocomplete="one-time-code" aria-label="Código que {{ para }} passou">
+           placeholder="0000" autocomplete="one-time-code" aria-label="Código que {{ para }} passou"
+           oninvalid="this.setCustomValidity('Digite o código de 4 dígitos que {{ para }} passou.')"
+           oninput="this.setCustomValidity('')">
     <button class="btn btn-primary" type="submit">Confirmar ajuda</button>
 </form>
 <form class="cancel-form" method="post" action="{{ url_for('trocas.cancelar', troca_id=t.id) }}">

@@ -62,6 +62,25 @@
     </div>
 
     <script>
+        // Lê em voz alta os textos marcados com data-ler (ajuda quem tem dificuldade de leitura).
+        function lerTela(botao) {
+            if (!("speechSynthesis" in window)) return;
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+                botao.classList.remove("on");
+                return;
+            }
+            var texto = Array.prototype.map.call(document.querySelectorAll("[data-ler]"), function (el) {
+                return el.innerText.replace(/\s+/g, " ").trim();
+            }).join(". ");
+            var fala = new SpeechSynthesisUtterance(texto);
+            fala.lang = "pt-BR";
+            fala.rate = 0.95;
+            fala.onend = function () { botao.classList.remove("on"); };
+            botao.classList.add("on");
+            speechSynthesis.speak(fala);
+        }
+
         // Números marcados com data-countup sobem de 0 até o valor ao abrir a tela.
         (function () {
             if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
