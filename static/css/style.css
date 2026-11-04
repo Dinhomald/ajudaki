@@ -2304,3 +2304,96 @@ a.card:active {
     color: var(--text);
     outline: none;
 }
+
+/* ---------- QR CODE NAS LATERAIS (projetor) ---------- */
+
+.qr-side {
+    display: none;
+}
+
+/* só quando sobra espaço dos dois lados da coluna do app */
+@media (min-width: 1100px) {
+    .qr-side {
+        --gutter: calc((100vw - var(--app-width)) / 2);
+        position: fixed;
+        top: 50%;
+        z-index: 1;
+        width: min(260px, calc(var(--gutter) - 48px));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transform: translate(-50%, -50%);
+    }
+
+    .qr-esquerda {
+        left: calc(var(--gutter) / 2);
+    }
+
+    .qr-direita {
+        left: calc(100vw - var(--gutter) / 2);
+    }
+
+    .qr-card {
+        width: 100%;
+        padding: 16px;
+        border-radius: 28px;
+        background: #fff;
+        border: 6px solid var(--brand);
+        box-shadow: 0 14px 40px rgba(11, 122, 92, 0.25);
+        animation: qr-flutuar 3.2s ease-in-out infinite;
+    }
+
+    .qr-direita .qr-card {
+        animation-delay: -1.6s;
+    }
+
+    .qr-card img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .qr-title {
+        margin: 18px 0 2px;
+        padding: 8px 18px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #0b7a5c, #27b3a0);
+        color: #fff;
+        font-size: 1.25rem;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        box-shadow: 0 6px 16px rgba(11, 122, 92, 0.3);
+    }
+
+    /* setinha apontando para o QR */
+    .qr-title::before {
+        content: "▲ ";
+        font-size: 0.8em;
+        color: #ffd666;
+    }
+
+    .qr-sub {
+        margin: 8px 0 0;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+
+    @keyframes qr-flutuar {
+        50% { transform: translateY(-8px); }
+    }
+}
+
+@media (min-width: 1100px) {
+    .qr-title {
+        white-space: nowrap;
+        font-size: 1.05rem;
+        letter-spacing: 0.04em;
+        padding: 9px 16px;
+    }
+
+    .qr-title::before {
+        font-size: 0.7em;
+    }
+}
