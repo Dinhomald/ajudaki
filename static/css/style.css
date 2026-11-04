@@ -1714,12 +1714,13 @@ a.card:active {
         --app-width: 560px;
     }
 
+    /* coluna larga para o projetor, mas conteúdo em tamanho normal */
     html {
-        font-size: 17px;
+        font-size: 15px;
     }
 
     body {
-        font-size: 17px;
+        font-size: 15px;
     }
 }
 
