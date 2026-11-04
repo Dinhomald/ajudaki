@@ -1,5 +1,4 @@
 import os
-import re
 import zlib
 
 from flask import Flask
@@ -11,20 +10,14 @@ from blueprints.organizacoes import organizacoes_bp
 from blueprints.talentos import talentos_bp
 from blueprints.territorio import territorio_bp
 from blueprints.trocas import trocas_bp
-from helpers import status_badge
+from helpers import sem_ficticio, status_badge
 from models import db
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DB_PATH = os.path.join(BASE_DIR, "ajudaki.db")
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads", "pessoas")
 
-FICTICIO_RE = re.compile(r"\s*\((?:dado )?fictíci[oa]\)", re.IGNORECASE)
 AVATAR_TONES = 6
-
-
-def sem_ficticio(texto):
-    """Remove o sufixo "(dado fictício)" da exibição; a tela mostra um aviso único no lugar."""
-    return FICTICIO_RE.sub("", texto or "")
 
 
 def avatar_tone(nome):
@@ -38,6 +31,8 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
     app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB
+    # usada só para as mensagens de confirmação (flash) entre uma tela e outra
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "ajudaki-dev")
     db.init_app(app)
     app.jinja_env.globals["status_badge"] = status_badge
     app.jinja_env.filters["sem_ficticio"] = sem_ficticio

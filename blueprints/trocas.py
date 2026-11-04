@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 
-from helpers import total_hours_completed
+from helpers import horas_txt, sem_ficticio, total_hours_completed
 from models import Need, Organization, TimeTransaction, User, db
 
 trocas_bp = Blueprint("trocas", __name__, url_prefix="/trocas")
@@ -58,6 +58,7 @@ def nova():
         )
         db.session.add(troca)
         db.session.commit()
+        flash("Troca registrada! Confirme quando a ajuda acontecer.")
         return redirect(url_for("trocas.list"))
 
     return render_template(
@@ -87,6 +88,7 @@ def concluir(troca_id):
         if troca.need_id:
             troca.need.status = "atendida"
         db.session.commit()
+        flash(f"🎉 {sem_ficticio(troca.provider.public_name)} ganhou {horas_txt(troca.hours)} de crédito!", "celebrar")
     return back_to_origin()
 
 
@@ -96,4 +98,5 @@ def cancelar(troca_id):
     if troca.status == "pendente":
         troca.status = "cancelada"
         db.session.commit()
+        flash("Troca cancelada. Ninguém ganhou crédito.", "neutro")
     return back_to_origin()

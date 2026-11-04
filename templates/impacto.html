@@ -5,27 +5,27 @@
 
 {% block content %}
 <a class="back" href="{{ url_for('dashboard.mais') }}">{{ icon('back', 20) }} Mais</a>
-{% call hero('Impacto', icone='chart') %}<strong>{{ '%g'|format(resumo.horas_trocadas) }}h</strong> trocadas em <strong>{{ resumo.conexoes_realizadas }}</strong> conexões{% endcall %}
+{% call hero('Impacto', icone='chart') %}<strong data-countup>{{ '%g'|format(resumo.horas_trocadas) }}h</strong> trocadas em <strong>{{ resumo.conexoes_realizadas }}</strong> conexões{% endcall %}
 
 <div class="tile-grid">
     <div class="tile">
         <span class="tile-icon avatar-c1">{{ icon('users', 20) }}</span>
-        <span class="stat-value">{{ resumo.pessoas_conectadas }}</span>
+        <span class="stat-value" data-countup>{{ resumo.pessoas_conectadas }}</span>
         <span class="stat-label">pessoas conectadas</span>
     </div>
     <div class="tile">
         <span class="tile-icon avatar-c4">{{ icon('building', 20) }}</span>
-        <span class="stat-value">{{ resumo.organizacoes }}</span>
+        <span class="stat-value" data-countup>{{ resumo.organizacoes }}</span>
         <span class="stat-label">organizações</span>
     </div>
     <div class="tile">
         <span class="tile-icon avatar-c2">{{ icon('clock', 20) }}</span>
-        <span class="stat-value">{{ '%g'|format(resumo.horas_oferecidas) }}h</span>
+        <span class="stat-value" data-countup>{{ '%g'|format(resumo.horas_oferecidas) }}h</span>
         <span class="stat-label">horas oferecidas</span>
     </div>
     <div class="tile">
         <span class="tile-icon avatar-c0">{{ icon('hand', 20) }}</span>
-        <span class="stat-value">{{ resumo.necessidades_atendidas }}</span>
+        <span class="stat-value" data-countup>{{ resumo.necessidades_atendidas }}</span>
         <span class="stat-label">pedidos atendidos</span>
     </div>
 </div>

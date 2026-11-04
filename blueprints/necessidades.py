@@ -1,6 +1,6 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 
-from helpers import find_matches_for_need
+from helpers import find_matches_for_need, sem_ficticio
 from models import Municipality, Need, Organization, Skill, TimeTransaction, User, db
 
 necessidades_bp = Blueprint("necessidades", __name__, url_prefix="/necessidades")
@@ -55,6 +55,7 @@ def nova():
         )
         db.session.add(need)
         db.session.commit()
+        flash("Pedido publicado! Veja abaixo quem pode ajudar.")
         return redirect(url_for("necessidades.detail", need_id=need.id))
 
     skills = Skill.query.order_by(Skill.name).all()
@@ -131,6 +132,7 @@ def assumir(need_id):
         )
     )
     db.session.commit()
+    flash(f"{sem_ficticio(provider.public_name)} foi chamado(a) para ajudar. Confirme quando a ajuda acontecer.")
     return redirect(url_for("necessidades.detail", need_id=need.id))
 
 

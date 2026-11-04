@@ -18,6 +18,20 @@
     <span class="demo-note">Dados de demonstração</span>
 </div>
 
+{# Linha do tempo do pedido: Aberto -> Combinado -> Atendido #}
+{% if need.status != 'cancelada' %}
+{% set etapa = 3 if need.status == 'atendida' else (2 if ajuda_combinada else 1) %}
+<ol class="stepper" aria-label="Andamento do pedido">
+    {% for numero, nome in [(1, 'Aberto'), (2, 'Combinado'), (3, 'Atendido')] %}
+    {% set feita = numero < etapa or etapa == 3 %}
+    <li class="{{ 'done' if feita }} {{ 'current' if numero == etapa and not feita }}" {% if numero == etapa %}aria-current="step"{% endif %}>
+        <span class="step-dot">{% if feita %}✓{% else %}{{ numero }}{% endif %}</span>
+        <span class="step-name">{{ nome }}</span>
+    </li>
+    {% endfor %}
+</ol>
+{% endif %}
+
 {% if erro %}<p class="error">{{ erro }}</p>{% endif %}
 
 {% if need.description or need.skill %}

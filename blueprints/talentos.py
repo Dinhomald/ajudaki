@@ -1,6 +1,6 @@
 import uuid
 
-from flask import Blueprint, current_app, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
 from helpers import user_balance
@@ -118,6 +118,7 @@ def novo():
             db.session.add(UserSkill(user_id=user.id, skill_id=skill.id, kind="quer_aprender"))
 
         db.session.commit()
+        flash(f"Boas-vindas à rede, {user.public_name}!", "celebrar")
         return redirect(url_for("talentos.perfil", user_id=user.id))
 
     return render_template("talento_form.html", municipios=municipios)
@@ -160,6 +161,7 @@ def nova_oferta(user_id):
         )
         db.session.add(oferta)
         db.session.commit()
+        flash("Oferta publicada!")
         return redirect(url_for("talentos.perfil", user_id=pessoa.id))
 
     return render_template("oferta_form.html", pessoa=pessoa, skills=skills)

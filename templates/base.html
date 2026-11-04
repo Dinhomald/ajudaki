@@ -11,12 +11,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
 </head>
 <body>
     <div class="app">
         <header class="appbar">
-            <a class="brand" href="{{ url_for('dashboard.index') }}">ajudaki</a>
+            <a class="brand" href="{{ url_for('dashboard.index') }}">
+                <img class="brand-mark" src="{{ url_for('static', filename='favicon.svg') }}" alt="" width="30" height="30">
+                ajudaki
+            </a>
         </header>
+
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% if mensagens %}
+        <div class="toasts" role="status">
+            {% for categoria, texto in mensagens %}
+            <div class="toast toast-{{ categoria }}" onclick="this.remove()">
+                {{ texto|sem_ficticio }}
+                {% if categoria == 'celebrar' %}
+                <span class="confetti" aria-hidden="true">{% for _ in range(14) %}<i></i>{% endfor %}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
 
         <main class="content">
             {% block content %}{% endblock %}
@@ -41,5 +60,30 @@
             <a href="{{ url_for('dashboard.mais') }}" class="{{ 'active' if ep == 'dashboard.mais' or ep.startswith(('organizacoes.', 'territorio.', 'impacto.')) }}">{{ icon('menu') }}<span>Mais</span></a>
         </nav>
     </div>
+
+    <script>
+        // Números marcados com data-countup sobem de 0 até o valor ao abrir a tela.
+        (function () {
+            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+            document.querySelectorAll("[data-countup]").forEach(function (el) {
+                var match = el.textContent.trim().match(/^(\d+(?:\.\d+)?)(.*)$/);
+                if (!match) return;
+                var alvo = parseFloat(match[1]);
+                var sufixo = match[2];
+                var casas = (match[1].split(".")[1] || "").length;
+                var inicio = null;
+                var duracao = 900;
+                function passo(agora) {
+                    if (!inicio) inicio = agora;
+                    var t = Math.min((agora - inicio) / duracao, 1);
+                    var suave = 1 - Math.pow(1 - t, 3);
+                    el.textContent = (alvo * suave).toFixed(casas) + sufixo;
+                    if (t < 1) requestAnimationFrame(passo);
+                }
+                el.textContent = (0).toFixed(casas) + sufixo;
+                requestAnimationFrame(passo);
+            });
+        })();
+    </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from blueprints.talentos import get_or_create_skill, parse_skill_names
 from helpers import organization_hours_received
@@ -50,6 +50,7 @@ def nova():
             db.session.add(OrganizationSkill(organization_id=organizacao.id, skill_id=skill.id))
 
         db.session.commit()
+        flash(f"{organizacao.name} agora faz parte da rede!", "celebrar")
         return redirect(url_for("organizacoes.perfil", organization_id=organizacao.id))
 
     return render_template("organizacao_form.html", municipios=municipios)

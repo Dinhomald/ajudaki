@@ -7,6 +7,8 @@ princípio de modelagem do projeto (evitar dados derivados persistidos
 quando eles podem ser calculados).
 """
 
+import re
+
 from sqlalchemy import func
 
 from models import (
@@ -49,6 +51,19 @@ STATUS_META = {
 
 def status_badge(kind, value):
     return STATUS_META[kind][value]
+
+
+FICTICIO_RE = re.compile(r"\s*\((?:dado )?fictíci[oa]\)", re.IGNORECASE)
+
+
+def sem_ficticio(texto):
+    """Remove o sufixo "(dado fictício)" da exibição; a tela mostra um aviso único no lugar."""
+    return FICTICIO_RE.sub("", texto or "")
+
+
+def horas_txt(horas):
+    """2.0 -> "2h", 1.5 -> "1.5h"."""
+    return f"{horas:g}h"
 
 
 # ---------- BANCO DE TEMPO ----------

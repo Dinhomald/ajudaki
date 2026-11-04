@@ -6,7 +6,7 @@
 {% block content %}
 <div class="page-hero">
     <h1 class="page-title">Olá!</h1>
-    <p class="hero-stat">A rede já trocou <strong>{{ '%g'|format(resumo.horas_trocadas) }}h</strong> de ajuda</p>
+    <p class="hero-stat">A rede já trocou <strong data-countup>{{ '%g'|format(resumo.horas_trocadas) }}h</strong> de ajuda</p>
     <span class="demo-note">Dados de demonstração</span>
 </div>
 
@@ -25,22 +25,22 @@
 <div class="tile-grid">
     <a class="tile" href="{{ url_for('talentos.list') }}">
         <span class="tile-icon avatar-c1">{{ icon('users', 20) }}</span>
-        <span class="stat-value">{{ resumo.pessoas_ativas }}</span>
+        <span class="stat-value" data-countup>{{ resumo.pessoas_ativas }}</span>
         <span class="stat-label">pessoas ativas</span>
     </a>
     <a class="tile" href="{{ url_for('organizacoes.list') }}">
         <span class="tile-icon avatar-c4">{{ icon('building', 20) }}</span>
-        <span class="stat-value">{{ resumo.organizacoes }}</span>
+        <span class="stat-value" data-countup>{{ resumo.organizacoes }}</span>
         <span class="stat-label">organizações</span>
     </a>
     <a class="tile" href="{{ url_for('talentos.list') }}">
         <span class="tile-icon avatar-c2">{{ icon('clock', 20) }}</span>
-        <span class="stat-value">{{ '%g'|format(resumo.horas_disponiveis) }}h</span>
+        <span class="stat-value" data-countup>{{ '%g'|format(resumo.horas_disponiveis) }}h</span>
         <span class="stat-label">disponíveis para ajudar</span>
     </a>
     <a class="tile" href="{{ url_for('necessidades.list', status='atendida') }}">
         <span class="tile-icon avatar-c0">{{ icon('hand', 20) }}</span>
-        <span class="stat-value">{{ resumo.necessidades_atendidas }}</span>
+        <span class="stat-value" data-countup>{{ resumo.necessidades_atendidas }}</span>
         <span class="stat-label">pedidos atendidos</span>
     </a>
 </div>

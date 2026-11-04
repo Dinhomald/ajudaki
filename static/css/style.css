@@ -1498,3 +1498,227 @@ a.card:active {
     color: var(--text);
     box-shadow: var(--shadow);
 }
+
+/* ---------- LOGO ---------- */
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-mark {
+    border-radius: 9px;
+    box-shadow: 0 2px 6px rgba(11, 122, 92, 0.3);
+}
+
+/* ---------- MENSAGENS DE CONFIRMAÇÃO (flash) ---------- */
+
+.toasts {
+    position: sticky;
+    top: 60px;
+    z-index: 50;
+    height: 0;
+    padding: 0 20px;
+}
+
+.toast {
+    position: relative;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    background: var(--text);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.95rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    animation: toast-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3), toast-out 0.4s ease 5s forwards;
+}
+
+.toast-celebrar {
+    background: linear-gradient(135deg, #0b7a5c, #27b3a0);
+    font-size: 1.05rem;
+}
+
+.toast-neutro {
+    background: var(--muted);
+}
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateY(-16px) scale(0.96); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes toast-out {
+    to { opacity: 0; transform: translateY(-10px); visibility: hidden; }
+}
+
+/* confete simples em CSS */
+.confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.confetti i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 12px;
+    border-radius: 2px;
+    opacity: 0;
+    animation: confete 1.4s ease-out forwards;
+}
+
+.confetti i:nth-child(4n+1) { background: #ffd666; }
+.confetti i:nth-child(4n+2) { background: #ff8a65; }
+.confetti i:nth-child(4n+3) { background: #7bd3f7; }
+.confetti i:nth-child(4n+4) { background: #b39ddb; }
+
+.confetti i:nth-child(1) { --x: -150px; --y: -70px; --r: 200deg; }
+.confetti i:nth-child(2) { --x: -110px; --y: 60px; --r: -160deg; }
+.confetti i:nth-child(3) { --x: -70px; --y: -90px; --r: 120deg; }
+.confetti i:nth-child(4) { --x: -40px; --y: 80px; --r: 300deg; }
+.confetti i:nth-child(5) { --x: 0px; --y: -100px; --r: -220deg; }
+.confetti i:nth-child(6) { --x: 30px; --y: 90px; --r: 180deg; }
+.confetti i:nth-child(7) { --x: 70px; --y: -80px; --r: -120deg; }
+.confetti i:nth-child(8) { --x: 110px; --y: 70px; --r: 260deg; }
+.confetti i:nth-child(9) { --x: 150px; --y: -60px; --r: -300deg; }
+.confetti i:nth-child(10) { --x: -170px; --y: 20px; --r: 90deg; }
+.confetti i:nth-child(11) { --x: 170px; --y: 10px; --r: -90deg; }
+.confetti i:nth-child(12) { --x: -90px; --y: -40px; --r: 140deg; }
+.confetti i:nth-child(13) { --x: 90px; --y: 40px; --r: -140deg; }
+.confetti i:nth-child(14) { --x: 10px; --y: 110px; --r: 360deg; }
+
+@keyframes confete {
+    0% { opacity: 1; transform: translate(-50%, -50%) rotate(0); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y) + 40px)) rotate(var(--r)); }
+}
+
+/* ---------- LINHA DO TEMPO DO PEDIDO ---------- */
+
+.stepper {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0 0 16px;
+    padding: 14px 8px 12px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.stepper li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+/* trilho entre as etapas */
+.stepper li + li::before {
+    content: "";
+    position: absolute;
+    top: 15px;
+    right: 50%;
+    width: 100%;
+    height: 4px;
+    margin-right: 16px;
+    border-radius: 2px;
+    background: var(--muted-bg);
+    z-index: 0;
+}
+
+.stepper li.done + li::before,
+.stepper li.done + li.current::before {
+    background: var(--brand);
+}
+
+.step-dot {
+    position: relative;
+    z-index: 1;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--muted-bg);
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+.stepper li.done .step-dot {
+    background: var(--brand);
+    color: #fff;
+}
+
+.stepper li.current .step-dot {
+    background: #ffd666;
+    color: #5c4300;
+    box-shadow: 0 0 0 5px rgba(255, 214, 102, 0.35);
+    animation: pulso 1.8s ease-in-out infinite;
+}
+
+.stepper li.current .step-name {
+    color: var(--text);
+}
+
+@keyframes pulso {
+    50% { box-shadow: 0 0 0 9px rgba(255, 214, 102, 0.15); }
+}
+
+/* ---------- ANIMAÇÕES DE ENTRADA ---------- */
+
+.bar-fill {
+    transform-origin: left center;
+    animation: barra 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes barra {
+    from { transform: scaleX(0); }
+}
+
+.card-list > *,
+.tile-grid > *,
+.quick-actions > * {
+    animation: surgir 0.4s ease both;
+}
+
+.card-list > :nth-child(2), .tile-grid > :nth-child(2), .quick-actions > :nth-child(2) { animation-delay: 0.05s; }
+.card-list > :nth-child(3), .tile-grid > :nth-child(3), .quick-actions > :nth-child(3) { animation-delay: 0.1s; }
+.card-list > :nth-child(4), .tile-grid > :nth-child(4) { animation-delay: 0.15s; }
+.card-list > :nth-child(5) { animation-delay: 0.2s; }
+.card-list > :nth-child(n+6) { animation-delay: 0.25s; }
+
+@keyframes surgir {
+    from { opacity: 0; transform: translateY(10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+    }
+}
+
+/* ---------- TELA GRANDE (projetor / computador) ---------- */
+
+@media (min-width: 1024px) {
+    :root {
+        --app-width: 560px;
+    }
+
+    html {
+        font-size: 17px;
+    }
+
+    body {
+        font-size: 17px;
+    }
+}
