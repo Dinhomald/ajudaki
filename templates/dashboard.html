@@ -7,7 +7,7 @@
 {# Início pensado para quem usa pouco celular: uma pergunta, duas escolhas grandes, frases curtas. #}
 <div class="page-hero home-hero">
     <div class="hero-top">
-        <h1 class="page-title" data-ler>Olá! O que você quer fazer hoje?</h1>
+        <h1 class="page-title" data-ler>Olá, {{ nome_logado }}! O que você quer fazer hoje?</h1>
         <button class="listen-button" type="button" onclick="lerTela(this)" aria-label="Ouvir esta tela">
             {{ icon('volume', 20) }} <span>Ouvir</span>
         </button>

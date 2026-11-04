@@ -1,5 +1,6 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for
 
+from blueprints.conta import e_quem_pediu
 from helpers import find_matches_for_need, sem_ficticio
 from models import Municipality, Need, Organization, Skill, TimeTransaction, User, db
 
@@ -49,10 +50,12 @@ def nova():
             location=request.form.get("location", "").strip(),
             status="aberta",
             skill_id=request.form.get("skill_id") or None,
-            requester_user_id=request.form.get("requester_user_id") or None,
-            requester_organization_id=request.form.get("requester_organization_id") or None,
-            requester_label=request.form.get("requester_label", "").strip() or None,
         )
+        # Quem pede é quem entrou no app.
+        if g.usuario:
+            need.requester_user_id = g.usuario.id
+        else:
+            need.requester_organization_id = g.organizacao.id
         db.session.add(need)
         db.session.commit()
         flash("Pedido publicado! Veja abaixo quem pode ajudar.")
@@ -104,9 +107,12 @@ def assumir(need_id):
     """
     need = Need.query.get_or_404(need_id)
     provider = User.query.get_or_404(request.form.get("provider_id", type=int))
+    se_ofereceu = bool(g.usuario) and provider.id == g.usuario.id
 
     erro = None
-    if need.status != "aberta":
+    if not (e_quem_pediu(need) or se_ofereceu):
+        erro = "Só quem pediu pode chamar alguém. Você pode se oferecer com \"Eu quero ajudar\"."
+    elif need.status != "aberta":
         erro = "Este pedido não está mais aberto."
     elif not (need.requester_user_id or need.requester_organization_id):
         erro = "Quem pediu ainda não tem cadastro. Cadastre a pessoa ou organização e vincule ao pedido."
@@ -132,7 +138,10 @@ def assumir(need_id):
         )
     )
     db.session.commit()
-    flash(f"{sem_ficticio(provider.public_name)} foi chamado(a) para ajudar. Confirme quando a ajuda acontecer.")
+    if se_ofereceu:
+        flash("Você se ofereceu para ajudar! Combine com quem pediu e, depois da ajuda, peça o código.")
+    else:
+        flash(f"{sem_ficticio(provider.public_name)} foi chamado(a) para ajudar. Depois da ajuda, passe o código para essa pessoa.")
     return redirect(url_for("necessidades.detail", need_id=need.id))
 
 
@@ -140,7 +149,9 @@ def assumir(need_id):
 def alterar_status(need_id):
     need = Need.query.get_or_404(need_id)
     novo_status = request.form.get("status")
-    if novo_status in ("aberta", "atendida", "cancelada"):
+    if not e_quem_pediu(need):
+        flash("Só quem pediu pode mudar a situação do pedido.", "erro")
+    elif novo_status in ("aberta", "atendida", "cancelada"):
         need.status = novo_status
         db.session.commit()
     return redirect(url_for("necessidades.detail", need_id=need.id))

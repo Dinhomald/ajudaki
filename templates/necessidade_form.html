@@ -56,35 +56,7 @@
         </label>
     </div>
 
-    <div class="form-card">
-        <h2 class="form-card-title"><span class="menu-icon avatar-c4">{{ icon('users', 18) }}</span> Quem está pedindo</h2>
-        <p class="hint">Preencha só uma das opções.</p>
-
-        <label>
-            {{ rotulo('Pessoa já cadastrada') }}
-            <select name="requester_user_id">
-                <option value="">—</option>
-                {% for p in pessoas %}
-                <option value="{{ p.id }}">{{ p.public_name|sem_ficticio }}</option>
-                {% endfor %}
-            </select>
-        </label>
-
-        <label>
-            {{ rotulo('Organização já cadastrada') }}
-            <select name="requester_organization_id">
-                <option value="">—</option>
-                {% for o in organizacoes %}
-                <option value="{{ o.id }}">{{ o.name|sem_ficticio }}</option>
-                {% endfor %}
-            </select>
-        </label>
-
-        <label>
-            {{ rotulo('Ou nome de quem pede (ainda sem cadastro)') }}
-            <input type="text" name="requester_label" placeholder="Ex.: OSC Esperança">
-        </label>
-    </div>
+    <p class="hint">Você está pedindo como <strong>{{ nome_logado }}</strong>.</p>
 
     <div class="form-actions">
         <a class="btn" href="{{ url_for('necessidades.list') }}">Cancelar</a>

@@ -20,6 +20,14 @@
                 <img class="brand-mark" src="{{ url_for('static', filename='favicon.svg') }}" alt="" width="30" height="30">
                 ajudaki
             </a>
+            {% if nome_logado %}
+            {# quem está usando o app agora + trocar de conta #}
+            <form class="who-chip" method="post" action="{{ url_for('conta.sair') }}">
+                <span class="who-avatar avatar-c{{ nome_logado|avatar_tone }}" aria-hidden="true">{{ nome_logado[0] }}</span>
+                <span class="who-name">{{ nome_logado }}</span>
+                <button type="submit" title="Sair e entrar com outra conta">Trocar</button>
+            </form>
+            {% endif %}
         </header>
 
         {% with mensagens = get_flashed_messages(with_categories=true) %}
@@ -41,6 +49,7 @@
             {% block content %}{% endblock %}
         </main>
 
+        {% if nome_logado %}
         {% if not (ep.endswith('.nova') or ep.endswith('.novo') or ep.endswith('.nova_oferta')) %}
         <details class="fab">
             <summary aria-label="Criar">{{ icon('plus', 28) }}</summary>
@@ -59,6 +68,7 @@
             <a href="{{ url_for('trocas.list') }}" class="{{ 'active' if ep.startswith('trocas.') }}">{{ icon('swap') }}<span>Trocas</span></a>
             <a href="{{ url_for('dashboard.mais') }}" class="{{ 'active' if ep == 'dashboard.mais' or ep.startswith(('organizacoes.', 'territorio.', 'impacto.')) }}">{{ icon('menu') }}<span>Mais</span></a>
         </nav>
+        {% endif %}
     </div>
 
     <script>

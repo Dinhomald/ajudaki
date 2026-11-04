@@ -5,7 +5,9 @@ services:
     plan: free
     buildCommand: pip install -r requirements.txt
     # o SQLite do plano grátis não persiste: recria os dados de exemplo a cada início
-    startCommand: python seed.py && gunicorn "app:create_app()" --bind 0.0.0.0:$PORT
+    # 1 processo com 8 threads: atende várias pessoas ao mesmo tempo e mantém
+    # um único SQLite (vários processos poderiam disputar o arquivo)
+    startCommand: python seed.py && gunicorn "app:create_app()" --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 60
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.7

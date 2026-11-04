@@ -42,7 +42,7 @@
 {% endif %}
 
 {# Com ajuda combinada, a situação muda pelos botões de confirmar/cancelar. #}
-{% if not ajuda_combinada %}
+{% if not ajuda_combinada and e_quem_pediu(need) %}
 <form class="status-actions" method="post" action="{{ url_for('necessidades.alterar_status', need_id=need.id) }}">
     <span>Situação</span>
     <div class="segmented">
@@ -56,6 +56,8 @@
 {% set horas = '%g'|format(need.hours) %}
 {% set ajuda_feita = need.transactions|selectattr('status', 'equalto', 'concluida')|first %}
 {% set pode_assumir = need.requester_user_id or need.requester_organization_id %}
+{% set sou_quem_pediu = e_quem_pediu(need) %}
+{% set posso_me_oferecer = usuario and not sou_quem_pediu and pode_assumir %}
 
 {% if ajuda_combinada %}
 {# Alguém já topou: falta confirmar que a ajuda aconteceu. #}
@@ -91,7 +93,17 @@
 
 {% if need.status == 'aberta' and not ajuda_combinada %}
 <div class="section">
+    {% if posso_me_oferecer %}
+    {# quem entrou no app pode se oferecer, sem esperar ser chamado #}
+    <form method="post" action="{{ url_for('necessidades.assumir', need_id=need.id) }}" class="offer-box">
+        <input type="hidden" name="provider_id" value="{{ usuario.id }}">
+        <p><strong>{{ nome_logado }}, você pode ajudar?</strong> Se oferecer não gera compromisso até a ajuda acontecer.</p>
+        <button class="btn btn-primary btn-block" type="submit">{{ icon('hand', 20) }} Eu quero ajudar</button>
+    </form>
+    {% endif %}
+
     <h2>Quem pode ajudar {% if recomendacoes %}<span class="count-pill">{{ recomendacoes|length }}</span>{% endif %}</h2>
+    {% if not sou_quem_pediu %}<p class="hint" style="margin: -4px 0 10px">Sugestões do Ajudaki para quem pediu.</p>{% endif %}
 
     {% if not pode_assumir %}
     <p class="error">Quem pediu ainda não tem cadastro, então não dá para combinar a ajuda por aqui. Cadastre a pessoa ou organização primeiro.</p>
@@ -115,7 +127,7 @@
                     </ul>
                 </div>
             </a>
-            {% if pode_assumir %}
+            {% if pode_assumir and sou_quem_pediu %}
             <form method="post" action="{{ url_for('necessidades.assumir', need_id=need.id) }}">
                 <input type="hidden" name="provider_id" value="{{ r.pessoa.id }}">
                 <button class="btn btn-primary btn-block" type="submit">{{ icon('hand', 18) }} Chamar para ajudar</button>
@@ -128,7 +140,7 @@
     <p class="empty">Ninguém com essa habilidade por enquanto.</p>
     {% endif %}
 
-    {% if pode_assumir and outras_pessoas %}
+    {% if pode_assumir and sou_quem_pediu and outras_pessoas %}
     <details class="other-helper">
         <summary>Outra pessoa vai ajudar</summary>
         <form class="form" method="post" action="{{ url_for('necessidades.assumir', need_id=need.id) }}">

@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
+from blueprints.conta import e_quem_ajuda, e_quem_pediu
 from helpers import horas_txt, sem_ficticio, total_hours_completed
 from models import Need, Organization, TimeTransaction, User, db
 
@@ -85,6 +86,10 @@ def concluir(troca_id):
     if troca.status != "pendente":
         return back_to_origin()
 
+    if not e_quem_ajuda(troca):
+        flash("Só quem ajudou pode confirmar, digitando o código.", "erro")
+        return back_to_origin()
+
     # Só confirma com o código que quem recebeu a ajuda tem em mãos.
     codigo = request.form.get("codigo", "").strip()
     if codigo != troca.confirmation_code:
@@ -105,6 +110,9 @@ def avaliar(troca_id):
     """Quem recebeu a ajuda dá de 1 a 5 estrelas (uma vez só, depois de confirmada)."""
     troca = TimeTransaction.query.get_or_404(troca_id)
     nota = request.form.get("nota", type=int)
+    if not e_quem_pediu(troca):
+        flash("Só quem recebeu a ajuda pode avaliar.", "erro")
+        return back_to_origin()
     if troca.status == "concluida" and troca.rating is None and nota in range(1, 6):
         troca.rating = nota
         troca.rating_comment = request.form.get("comentario", "").strip()[:200] or None
@@ -116,6 +124,9 @@ def avaliar(troca_id):
 @trocas_bp.route("/<int:troca_id>/cancelar", methods=["POST"])
 def cancelar(troca_id):
     troca = TimeTransaction.query.get_or_404(troca_id)
+    if not (e_quem_ajuda(troca) or e_quem_pediu(troca)):
+        flash("Só quem está na troca pode cancelar.", "erro")
+        return back_to_origin()
     if troca.status == "pendente":
         troca.status = "cancelada"
         db.session.commit()

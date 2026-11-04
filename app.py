@@ -3,6 +3,7 @@ import zlib
 
 from flask import Flask
 
+from blueprints.conta import conta_bp, e_quem_ajuda, e_quem_pediu
 from blueprints.dashboard import dashboard_bp
 from blueprints.impacto import impacto_bp
 from blueprints.necessidades import necessidades_bp
@@ -37,6 +38,8 @@ def create_app():
     app.jinja_env.globals["status_badge"] = status_badge
     app.jinja_env.filters["sem_ficticio"] = sem_ficticio
     app.jinja_env.filters["avatar_tone"] = avatar_tone
+    app.jinja_env.globals["e_quem_pediu"] = e_quem_pediu
+    app.jinja_env.globals["e_quem_ajuda"] = e_quem_ajuda
 
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -44,6 +47,7 @@ def create_app():
         db.create_all()
         ensure_new_columns()
 
+    app.register_blueprint(conta_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(territorio_bp)
     app.register_blueprint(talentos_bp)

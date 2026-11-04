@@ -3,6 +3,7 @@ import uuid
 from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
+from blueprints.conta import entrar_como_pessoa
 from helpers import user_balance, user_rating
 from models import Municipality, Offer, Skill, TimeTransaction, User, UserSkill, db
 
@@ -118,7 +119,8 @@ def novo():
             db.session.add(UserSkill(user_id=user.id, skill_id=skill.id, kind="quer_aprender"))
 
         db.session.commit()
-        flash(f"Boas-vindas à rede, {user.public_name}!", "celebrar")
+        entrar_como_pessoa(user)
+        flash(f"Boas-vindas à rede, {user.public_name}! Você já entrou com a sua conta.", "celebrar")
         return redirect(url_for("talentos.perfil", user_id=user.id))
 
     return render_template("talento_form.html", municipios=municipios)
