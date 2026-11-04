@@ -14,16 +14,37 @@
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
 </head>
 <body>
-    {# QR code nas laterais, só em telas largas (projetor), para o público entrar pelo celular #}
-    {% for lado in ['esquerda', 'direita'] %}
-    <aside class="qr-side qr-{{ lado }}" aria-hidden="true">
+    {# Laterais só em telas largas (projetor): QR code à esquerda, equipe à direita #}
+    <aside class="qr-side qr-esquerda" aria-hidden="true">
         <div class="qr-card">
             <img src="{{ url_for('static', filename='qr-acesso.svg') }}" alt="">
         </div>
         <p class="qr-title">ACESSE POR AQUI</p>
         <p class="qr-sub">Aponte a câmera do celular</p>
     </aside>
-    {% endfor %}
+    {% if EQUIPE %}
+    <aside class="qr-side qr-direita team-side">
+        <p class="team-title">Desenvolvido por:</p>
+        <ul class="team-list">
+            {% for membro in EQUIPE %}
+            <li>
+                <span class="team-ring">
+                    {% if membro.foto %}
+                    <img class="team-photo" src="{{ url_for('static', filename='equipe/' + membro.foto) }}" alt="Foto de {{ membro.nome }}">
+                    {% else %}
+                    <span class="team-photo avatar-c{{ membro.nome|avatar_tone }}" aria-hidden="true">{{ membro.nome[0] }}</span>
+                    {% endif %}
+                </span>
+                <span class="team-name">
+                    <strong>{{ membro.nome }}</strong>
+                    {% if membro.sobrenome %}<small>{{ membro.sobrenome }}</small>{% endif %}
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+        <p class="team-footer">SESI - QUARTA NOITE - 2026</p>
+    </aside>
+    {% endif %}
 
     <div class="app">
         <header class="appbar">

@@ -11,6 +11,7 @@ from blueprints.organizacoes import organizacoes_bp
 from blueprints.talentos import talentos_bp
 from blueprints.territorio import territorio_bp
 from blueprints.trocas import trocas_bp
+from equipe import EQUIPE
 from helpers import sem_ficticio, status_badge
 from models import db, ensure_new_columns
 
@@ -39,6 +40,7 @@ def create_app():
     app.jinja_env.filters["sem_ficticio"] = sem_ficticio
     app.jinja_env.filters["avatar_tone"] = avatar_tone
     app.jinja_env.globals["e_quem_pediu"] = e_quem_pediu
+    app.jinja_env.globals["EQUIPE"] = EQUIPE
     app.jinja_env.globals["e_quem_ajuda"] = e_quem_ajuda
 
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)

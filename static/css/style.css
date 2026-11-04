@@ -2398,3 +2398,130 @@ a.card:active {
         font-size: 0.7em;
     }
 }
+
+/* ---------- EQUIPE NA LATERAL DIREITA ---------- */
+
+@media (min-width: 1100px) {
+    .team-side {
+        width: min(280px, calc(var(--gutter) - 40px));
+        padding: 22px 18px 18px;
+        border-radius: 28px;
+        background: #fff;
+        box-shadow: 0 14px 40px rgba(11, 122, 92, 0.18);
+        border-top: 6px solid var(--brand);
+    }
+
+    .team-title {
+        margin: 0 0 14px;
+        font-size: 1.05rem;
+        font-weight: 900;
+        letter-spacing: 0.02em;
+        color: var(--brand-dark);
+    }
+
+    .team-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+        gap: 14px 8px;
+    }
+
+    .team-list li {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .team-photo {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        font-weight: 800;
+        box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--brand-soft);
+    }
+
+    .team-name {
+        font-size: 0.95rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .team-footer {
+        margin: 16px 0 0;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-muted);
+    }
+}
+
+/* equipe: lista vertical, foto em círculo com anel verde e nome em destaque */
+@media (min-width: 1100px) {
+    .team-side {
+        align-items: stretch;
+        text-align: left;
+    }
+
+    .team-title {
+        text-align: center;
+    }
+
+    .team-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .team-list li {
+        flex-direction: row;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .team-ring {
+        flex-shrink: 0;
+        padding: 4px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0b7a5c, #27b3a0);
+        box-shadow: 0 4px 12px rgba(11, 122, 92, 0.3);
+    }
+
+    .team-photo {
+        width: 58px;
+        height: 58px;
+        border: 3px solid #fff;
+        box-shadow: none;
+        font-size: 1.4rem;
+    }
+
+    .team-name {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.15;
+    }
+
+    .team-name strong {
+        font-size: 1.15rem;
+        font-weight: 900;
+        color: var(--text);
+        letter-spacing: -0.01em;
+    }
+
+    .team-name small {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--brand);
+    }
+
+    .team-footer {
+        text-align: center;
+    }
+}
