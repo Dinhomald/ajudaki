@@ -53,9 +53,10 @@
     {% if pedidos_recentes %}
     <div class="card-list">
         {% for n in pedidos_recentes %}
-        <a class="card card-accent card-accent-good" href="{{ url_for('necessidades.detail', need_id=n.id) }}">
+        <a class="card card-accent card-accent-{{ status_badge('need', n.display_status).tone }}" href="{{ url_for('necessidades.detail', need_id=n.id) }}">
             <div class="card-title"><span>{{ n.title|sem_ficticio }}</span>{{ icon('chevron', 18) }}</div>
             <div class="meta">
+                <span>{{ icon('building' if n.requester_organization else 'users') }} {{ n.requester_display_name|sem_ficticio }}</span>
                 <span>{{ icon('pin') }} {{ n.municipality.name }}</span>
                 <span>{{ icon('clock') }} {{ '%g'|format(n.hours) }}h</span>
                 {% if n.skill %}<span class="tag tag-c{{ n.skill.name|avatar_tone }}">{{ n.skill.name }}</span>{% endif %}

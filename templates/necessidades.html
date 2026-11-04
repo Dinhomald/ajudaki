@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
+{% from "_ui.html" import avatar %}
 {% block title %}Pedidos{% endblock %}
 
 {% block content %}
@@ -35,18 +36,27 @@
 {% if necessidades %}
 <div class="card-list">
     {% for n in necessidades %}
-    {% set b = status_badge('need', n.status) %}
+    {% set b = status_badge('need', n.display_status) %}
     <a class="card card-accent card-accent-{{ b.tone }}" href="{{ url_for('necessidades.detail', need_id=n.id) }}">
         <div class="card-title">
             <span>{{ n.title|sem_ficticio }}</span>
             <span class="badge badge-{{ b.tone }}">{{ b.label }}</span>
         </div>
         <div class="meta">
+            <span>{{ icon('building' if n.requester_organization else 'users') }} Pedido por {{ n.requester_display_name|sem_ficticio }}</span>
             <span>{{ icon('pin') }} {{ n.municipality.name }}</span>
             <span>{{ icon('clock') }} {{ '%g'|format(n.hours) }}h</span>
         </div>
         {% if n.description %}<p class="clamp-1">{{ n.description }}</p>{% endif %}
         {% if n.skill %}<div class="tags"><span class="tag tag-c{{ n.skill.name|avatar_tone }}">{{ n.skill.name }}</span></div>{% endif %}
+        {# quem vai ajudar (combinado) ou quem ajudou (atendido) #}
+        {% set ajuda = n.pending_transaction or (n.transactions|selectattr('status', 'equalto', 'concluida')|first) %}
+        {% if ajuda %}
+        <div class="helper-line">
+            {{ avatar(ajuda.provider, 'xs') }}
+            <span><strong>{{ ajuda.provider.public_name|sem_ficticio }}</strong> {{ 'vai ajudar' if ajuda.status == 'pendente' else 'ajudou' }}</span>
+        </div>
+        {% endif %}
     </a>
     {% endfor %}
 </div>

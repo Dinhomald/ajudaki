@@ -1943,3 +1943,21 @@ a.card:active {
     flex-direction: column;
     gap: 4px;
 }
+
+/* ---------- QUEM AJUDA (nos cards de pedido) ---------- */
+
+.avatar-xs {
+    width: 26px;
+    height: 26px;
+    font-size: 0.75rem;
+}
+
+.helper-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+}

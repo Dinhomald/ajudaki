@@ -38,6 +38,7 @@ STATUS_META = {
     },
     "need": {
         "aberta": {"tone": "good", "label": "Aberto"},
+        "combinada": {"tone": "warning", "label": "Combinado"},
         "atendida": {"tone": "info", "label": "Atendido"},
         "cancelada": {"tone": "critical", "label": "Cancelado"},
     },

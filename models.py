@@ -154,6 +154,17 @@ class Need(db.Model):
             return self.requester_organization.name
         return self.requester_label or "Não informado"
 
+    @property
+    def pending_transaction(self):
+        return next((t for t in self.transactions if t.status == "pendente"), None)
+
+    @property
+    def display_status(self):
+        """Status mostrado na tela: pedido aberto que já tem ajuda combinada aparece como "combinada"."""
+        if self.status == "aberta" and self.pending_transaction:
+            return "combinada"
+        return self.status
+
 
 class TimeTransaction(db.Model):
     """
