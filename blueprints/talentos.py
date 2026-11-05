@@ -4,8 +4,8 @@ from flask import Blueprint, current_app, flash, redirect, render_template, requ
 from werkzeug.utils import secure_filename
 
 from blueprints.conta import entrar_como_pessoa
-from helpers import user_balance, user_rating
-from models import Municipality, Offer, Skill, TimeTransaction, User, UserSkill, db
+from helpers import rating_distribution, ratings_by_user, user_balance, user_rating, user_reviews
+from models import Municipality, Offer, Skill, User, UserSkill, db
 
 talentos_bp = Blueprint("talentos", __name__, url_prefix="/talentos")
 
@@ -85,6 +85,7 @@ def list():
         pessoas=pessoas,
         municipios=municipios,
         habilidades_populares=habilidades_populares,
+        notas=ratings_by_user(),
         filtro_municipio=municipio_id,
         filtro_habilidade=habilidade,
         mostrar_inativas=mostrar_inativas,
@@ -131,19 +132,13 @@ def perfil(user_id):
     pessoa = User.query.get_or_404(user_id)
     oferecidas, recebidas, saldo = user_balance(user_id)
     nota_media, total_avaliacoes = user_rating(user_id)
-    depoimentos = (
-        TimeTransaction.query.filter(
-            TimeTransaction.provider_id == user_id, TimeTransaction.rating_comment.isnot(None)
-        )
-        .order_by(TimeTransaction.completed_at.desc())
-        .limit(3)
-        .all()
-    )
+    avaliacoes = user_reviews(user_id)
     return render_template(
         "talento_perfil.html",
         nota_media=nota_media,
         total_avaliacoes=total_avaliacoes,
-        depoimentos=depoimentos,
+        avaliacoes=avaliacoes,
+        distribuicao=rating_distribution(avaliacoes),
         pessoa=pessoa,
         horas_oferecidas=oferecidas,
         horas_recebidas=recebidas,

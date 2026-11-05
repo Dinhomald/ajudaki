@@ -12,7 +12,7 @@ from blueprints.talentos import talentos_bp
 from blueprints.territorio import territorio_bp
 from blueprints.trocas import trocas_bp
 from equipe import EQUIPE
-from helpers import sem_ficticio, status_badge
+from helpers import nota_txt, sem_ficticio, status_badge, tempo_atras
 from models import db, ensure_new_columns
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -39,6 +39,8 @@ def create_app():
     app.jinja_env.globals["status_badge"] = status_badge
     app.jinja_env.filters["sem_ficticio"] = sem_ficticio
     app.jinja_env.filters["avatar_tone"] = avatar_tone
+    app.jinja_env.filters["tempo_atras"] = tempo_atras
+    app.jinja_env.filters["nota"] = nota_txt
     app.jinja_env.globals["e_quem_pediu"] = e_quem_pediu
     app.jinja_env.globals["EQUIPE"] = EQUIPE
     app.jinja_env.globals["e_quem_ajuda"] = e_quem_ajuda

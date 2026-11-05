@@ -2530,3 +2530,157 @@ a.card:active {
 .login-team .avatar {
     box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--brand);
 }
+
+/* ---------- AVALIAÇÕES NO PERFIL ---------- */
+
+.review-summary {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.review-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 92px;
+}
+
+.review-score-value {
+    font-size: 2.4rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.review-bars {
+    flex: 1;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.review-bars li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.review-bar-label {
+    width: 22px;
+    text-align: right;
+}
+
+.review-bar-count {
+    width: 16px;
+}
+
+.review-bar {
+    flex: 1;
+    height: 8px;
+    border-radius: 99px;
+    background: var(--muted-bg);
+    overflow: hidden;
+}
+
+.review-bar span {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+    background: #f5b301;
+}
+
+.review-list {
+    margin-top: 12px;
+}
+
+.review-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.review-head {
+    display: flex;
+    align-items: center;
+}
+
+.review-head .avatar-sm {
+    margin-right: 10px;
+}
+
+.review-who {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.review-who strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.review-who .hint {
+    font-size: 0.78rem;
+}
+
+.review-card q {
+    font-size: 0.92rem;
+    font-style: italic;
+}
+
+.review-help {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.review-help a {
+    color: var(--brand);
+    font-weight: 600;
+}
+
+.review-more summary {
+    cursor: pointer;
+    text-align: center;
+    padding: 10px;
+    font-weight: 700;
+    color: var(--brand);
+    list-style: none;
+}
+
+.review-more summary::-webkit-details-marker {
+    display: none;
+}
+
+.review-more[open] summary {
+    display: none;
+}
+
+.card-rating {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.card-rating .hint {
+    font-weight: 400;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 360px) {
+    .review-summary {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

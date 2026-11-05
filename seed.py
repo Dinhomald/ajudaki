@@ -580,5 +580,133 @@ with app.app_context():
         troca.rating = notas[i % len(notas)]
         troca.rating_comment = comentarios[i % len(comentarios)]
 
+    # Demandas já finalizadas: o pedido foi atendido, a ajuda confirmada com o
+    # código e quem recebeu deixou a avaliação. Alimenta a seção "Avaliações"
+    # do perfil de quem ajudou.
+    # (pedido, descrição, horas, cidade, local, habilidade, quem pediu, quem ajudou,
+    #  dias atrás, nota, comentário)
+    esperanca = "OSC Esperança (fictícia)"
+    nova_geracao = "OSC Nova Geração (fictícia)"
+    raizes = "Coletivo Raízes (fictício)"
+    horta = "Horta Comunitária Garibaldi (fictícia)"
+    moradores = "Associação de Moradores do Centro (fictícia)"
+    demandas_finalizadas = [
+        ("Planilha de controle de cestas básicas", "Saber quantas cestas entram e saem por semana.", 2, caxias,
+         "Sede da OSC Esperança", "Excel", esperanca, "Fernanda", 140, 5,
+         "A planilha mudou nossa rotina, agora sabemos exatamente o que falta."),
+        ("Painel de atendimentos do semestre", "Gráficos para apresentar aos apoiadores.", 3, caxias,
+         "Sede da OSC Esperança", "Power BI", esperanca, "Fernanda", 45, 5,
+         "Ficou lindo e fácil de atualizar. Os apoiadores adoraram."),
+        ("Excel para a feira do bairro", "Controle de vendas das barracas.", 1, caxias,
+         "Cinquentenário", "Excel", "Juliana", "Fernanda", 8, 4,
+         "Explicou bem, só faltou tempo para ver os gráficos."),
+        ("Inglês para entrevista de emprego", "Simular uma entrevista em inglês.", 2, caxias,
+         "Biblioteca pública", "Inglês", "Thiago", "Lucas", 95, 5,
+         "Fiquei muito mais confiante. Passei na entrevista!"),
+        ("Revisão de redação do ENEM", "Corrigir três redações de alunos.", 2, caxias,
+         "Online", "Português", raizes, "Lucas", 33, 4, None),
+        ("Trocar disjuntor do salão", "Disjuntor desarmando toda hora.", 2, bento,
+         "Salão comunitário", "Elétrica básica", moradores, "Rafael", 110, 5,
+         "Resolveu na hora e ainda explicou o que estava errado."),
+        ("Prateleiras para a biblioteca comunitária", "Montar duas estantes de madeira.", 4, caxias,
+         "Coletivo Raízes", "Marcenaria", raizes, "Rafael", 26, 4,
+         "Trabalho caprichado, só demorou um pouco mais que o combinado."),
+        ("Acompanhar consulta médica", "Levar dona Irma à consulta no posto.", 3, caxias,
+         "Posto de saúde", "Cuidados com idosos", "Beatriz", "Juliana", 64, 5,
+         "Uma pessoa iluminada. Cuidou da minha mãe como se fosse da família."),
+        ("Fotos da formatura do reforço", "Registrar a formatura das crianças.", 2, bento,
+         "Sede da OSC Nova Geração", "Fotografia", nova_geracao, "Thiago", 58, 5,
+         "As famílias choraram vendo as fotos. Muito obrigado!"),
+        ("Instalar programas no laboratório", "Dez computadores sem editor de texto.", 3, farroupilha,
+         "Centro comunitário", "Informática", raizes, "Gabriel", 80, 5,
+         "Rápido, organizado e deixou tudo anotado para a gente."),
+        ("Notebook muito lento", "Notebook usado pelos alunos travando.", 1, farroupilha,
+         "Escola municipal", "Manutenção de computadores", "Ana", "Gabriel", 15, 3,
+         "Melhorou, mas o notebook ainda trava às vezes."),
+        ("Horta na escola", "Montar canteiros com as crianças.", 4, farroupilha,
+         "Escola municipal", "Jardinagem", nova_geracao, "Helena", 105, 5,
+         "As crianças não param de falar da horta!"),
+        ("Recuperar canteiros depois da chuva", "Canteiros alagados, mudas perdidas.", 3, garibaldi,
+         horta, "Jardinagem", horta, "Helena", 20, 4, None),
+        ("Reforço de matemática para o 6º ano", "Frações e porcentagem.", 4, bento,
+         "Sede da OSC Nova Geração", "Matemática", nova_geracao, "Camila", 52, 5,
+         "Didática excelente, os alunos melhoraram as notas."),
+        ("Logo do projeto de leitura", "Identidade visual para o projeto.", 2, bento,
+         "Online", "Design gráfico", nova_geracao, "Diego", 88, 4,
+         "Ficou bonito. Precisou de alguns ajustes, mas atendeu bem."),
+        ("Cartazes da campanha do agasalho", "Três cartazes para imprimir.", 2, caxias,
+         "Online", "Design gráfico", esperanca, "Diego", 11, 5, "Criativo e muito rápido!"),
+        ("Bainhas nos uniformes do time", "Ajustar 15 calças do time infantil.", 3, bento,
+         "Associação de Moradores", "Costura", moradores, "Sofia", 37, 5,
+         "Dona Sofia é um amor, entregou antes do prazo."),
+        ("Ensinar plantio de temperos", "Oficina para as famílias do bairro.", 2, garibaldi,
+         horta, "Jardinagem", horta, "Eduardo", 70, 4, "Aprendemos muito, recomendo."),
+        ("Companhia no fim de semana", "Visitar o seu Ernesto, que mora sozinho.", 3, flores,
+         "Centro", "Cuidados com idosos", "Helena", "Vitória", 43, 5,
+         "Meu pai espera ansioso pelas visitas dela."),
+        ("Violão para iniciantes", "Primeiras músicas para a turma da praça.", 2, flores,
+         "Praça central", "Violão", musica, "André", 66, 5, "Paciência de sobra com a criançada."),
+        ("Manutenção dos violões do projeto", "Trocar cordas e afinar 8 violões.", 1, flores,
+         "Praça central", "Violão", musica, "André", 9, 4, None),
+        ("Fórmulas para o caixa da cantina", "Somar vendas do dia automaticamente.", 1, caxias,
+         "Cantina da escola", "Excel", "Camila", "Maria", 28, 5,
+         "Agora fecho o caixa em cinco minutos!"),
+        ("Rede Wi-Fi do centro comunitário", "Internet não chegava nas salas do fundo.", 2, caxias,
+         "Sede da OSC Esperança", "Informática", esperanca, "João", 55, 4,
+         "Resolveu o problema, mas precisou voltar uma segunda vez."),
+        ("Posts para o bazar beneficente", "Divulgar o bazar no Instagram.", 2, farroupilha,
+         "Online", "Redes sociais", raizes, "Ana", 24, 5,
+         "O bazar lotou! Muito obrigado pela divulgação."),
+        ("Orientação sobre contrato de aluguel", "Entender cláusulas antes de assinar.", 1, bento,
+         "Online", "Direito básico", "Camila", "Pedro", 47, 5,
+         "Explicou tudo com muita clareza, me evitou um problemão."),
+        ("Consertar cortinas do lar", "Cortinas rasgadas nos quartos.", 3, caxias,
+         "Lar Bem Viver", "Costura", lar, "Beatriz", 34, 5, None),
+        ("Planilha de doações automatizada", "Juntar as planilhas de doação em um relatório só.", 3, caxias,
+         "Sede da OSC Esperança", "Engenharia de dados", esperanca, "Ronaldo Maldonado", 40, 5,
+         "Transformou cinco planilhas bagunçadas em um relatório que se atualiza sozinho."),
+        ("Site simples para o coletivo", "Página com endereço, horários e contato.", 4, caxias,
+         "Online", "Desenvolvimento de sites", raizes, "Ronaldo Maldonado", 16, 5,
+         "Explicou tudo sem termos complicados. Agora as pessoas nos acham no Google!"),
+        ("Computador da secretaria não liga", "Computador parou de ligar do nada.", 1, caxias,
+         "Lar Bem Viver", "Manutenção de computadores", lar, "Ronaldo Maldonado", 5, 4,
+         "Resolveu rápido, só precisou trocar uma peça que demorou a chegar."),
+    ]
+    for (titulo, descricao, horas, cidade, local, habilidade, quem_pediu, quem_ajudou,
+         dias, nota, comentario) in demandas_finalizadas:
+        pediu_org = organizacoes.get(quem_pediu)
+        pediu_pessoa = None if pediu_org else usuarios[f"{quem_pediu} (dado fictício)"]
+        ajudou = usuarios.get(quem_ajudou) or usuarios[f"{quem_ajudou} (dado fictício)"]
+        concluida_em = now - timedelta(days=dias, hours=dias % 7)
+        pedido = Need(
+            title=f"{titulo} (dado fictício)",
+            description=descricao,
+            hours=horas,
+            municipality_id=cidade.id,
+            location=local,
+            status="atendida",
+            skill_id=skills[habilidade].id,
+            requester_user_id=pediu_pessoa.id if pediu_pessoa else None,
+            requester_organization_id=pediu_org.id if pediu_org else None,
+            created_at=concluida_em - timedelta(days=5),
+        )
+        db.session.add(pedido)
+        db.session.flush()
+        db.session.add(
+            TimeTransaction(
+                provider_id=ajudou.id,
+                requester_user_id=pediu_pessoa.id if pediu_pessoa else None,
+                requester_organization_id=pediu_org.id if pediu_org else None,
+                need_id=pedido.id,
+                hours=horas,
+                description=f"{titulo} (dado fictício)",
+                status="concluida",
+                created_at=concluida_em - timedelta(days=3),
+                completed_at=concluida_em,
+                rating=nota,
+                rating_comment=comentario,
+            )
+        )
+
     db.session.commit()
     print("Banco populado com dados ficticios em ajudaki.db")

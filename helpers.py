@@ -8,6 +8,7 @@ quando eles podem ser calculados).
 """
 
 import re
+from datetime import datetime
 
 from sqlalchemy import func
 
@@ -101,6 +102,65 @@ def user_rating(user_id):
         .one()
     )
     return (round(media, 1) if media else None), total
+
+
+def user_reviews(user_id):
+    """Todas as avaliações que a pessoa recebeu por ajudas feitas, das mais recentes para as antigas."""
+    return (
+        TimeTransaction.query.filter(
+            TimeTransaction.provider_id == user_id,
+            TimeTransaction.status == "concluida",
+            TimeTransaction.rating.isnot(None),
+        )
+        .order_by(TimeTransaction.completed_at.desc())
+        .all()
+    )
+
+
+def rating_distribution(reviews):
+    """Quantas avaliações de cada nota, de 5 a 1: [(nota, quantidade, % do total)]."""
+    total = len(reviews)
+    contagem = {n: 0 for n in range(1, 6)}
+    for r in reviews:
+        contagem[r.rating] += 1
+    return [(n, contagem[n], round(contagem[n] * 100 / total) if total else 0) for n in range(5, 0, -1)]
+
+
+def ratings_by_user():
+    """{user_id: (média, quantidade)} de todo mundo que já foi avaliado (para as listas)."""
+    rows = (
+        db.session.query(
+            TimeTransaction.provider_id, func.avg(TimeTransaction.rating), func.count(TimeTransaction.rating)
+        )
+        .filter(TimeTransaction.rating.isnot(None))
+        .group_by(TimeTransaction.provider_id)
+        .all()
+    )
+    return {uid: (round(media, 1), total) for uid, media, total in rows}
+
+
+def tempo_atras(quando):
+    """datetime -> "hoje", "ontem", "há 5 dias", "há 2 semanas", "há 3 meses"."""
+    if not quando:
+        return ""
+    dias = (datetime.utcnow() - quando).days
+    if dias <= 0:
+        return "hoje"
+    if dias == 1:
+        return "ontem"
+    if dias < 14:
+        return f"há {dias} dias"
+    if dias < 60:
+        return f"há {dias // 7} semanas"
+    if dias < 365:
+        return f"há {dias // 30} meses"
+    anos = dias // 365
+    return "há 1 ano" if anos == 1 else f"há {anos} anos"
+
+
+def nota_txt(nota):
+    """4.8 -> "4,8"."""
+    return f"{nota:.1f}".replace(".", ",")
 
 
 def organization_hours_received(organization_id):

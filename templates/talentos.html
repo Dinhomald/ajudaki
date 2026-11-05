@@ -55,7 +55,12 @@
                 <span class="badge badge-good" title="{{ pessoa.availability }}">Disponível</span>
                 {% endif %}
             </div>
-            <div class="meta"><span>{{ icon('pin') }} {{ pessoa.municipality.name }}</span></div>
+            <div class="meta">
+                <span>{{ icon('pin') }} {{ pessoa.municipality.name }}</span>
+                {% if notas.get(pessoa.id) %}{% set media, qtd = notas[pessoa.id] %}
+                <span class="card-rating" aria-label="Nota {{ media|nota }} de 5, {{ qtd }} avaliações"><span class="star-on">★</span> {{ media|nota }} <span class="hint">({{ qtd }})</span></span>
+                {% endif %}
+            </div>
             {% if habilidades %}
             <div class="tags">
                 {% for skill in habilidades[:2] %}
